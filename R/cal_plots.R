@@ -1,4 +1,4 @@
-#' A single calibration plot with error bars showing 95% confidence intervals
+#' A single calibration plot with error bars showing 95 percent confidence intervals
 #'
 #' @param df The df as a data.frame.
 #' @param outcome_var A character string containing the name of the column containing
@@ -7,8 +7,9 @@
 #' the predictions.
 #' @param n_bins Number of bins. Defaults to 10.
 #' @param plot_title A character string containing the title for the resulting plot.
-#'
 #' @return A ggplot containing the calibration plot
+#' @examples
+#' cal_plot(single_model_dataset, outcome_var = 'outcomes', pred_var = 'predictions', n_bins = 5)
 cal_plot <- function(df, outcome_var, pred_var, n_bins = 10, plot_title = '', ...){
 
   # The calibration plot
@@ -60,7 +61,7 @@ cal_plot <- function(df, outcome_var, pred_var, n_bins = 10, plot_title = '', ..
 
 
 
-#' Multiple calibration plots with colored/shaded 95% confidence intervals
+#' Multiple calibration plots with colored/shaded 95 percent confidence intervals
 #'
 #' @param df The df as a data.frame.
 #' @param outcome_var A character string containing the name of the column containing
@@ -71,8 +72,9 @@ cal_plot <- function(df, outcome_var, pred_var, n_bins = 10, plot_title = '', ..
 #' the model names
 #' @param n_bins Number of bins. Defaults to 10.
 #' @param plot_title A character string containing the title for the resulting plot.
-#'
 #' @return A ggplot containing the calibration plot
+#' @examples
+#' cal_plot_multi(multi_model_dataset, outcome_var = 'outcomes',model_column = 'model_name', pred_var = 'predictions', n_bins = 5)
 cal_plot_multi <- function(df, outcome_var, pred_var, model_column, n_bins = 10, plot_title = '', ...){
 
   how_many_models = df[[model_column]] %>% unique() %>% length()

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cal_plots.R
 \name{cal_plot_multi}
 \alias{cal_plot_multi}
-\title{Multiple calibration plots with colored/shaded 95% confidence intervals}
+\title{Multiple calibration plots with colored/shaded 95 percent confidence intervals}
 \usage{
 cal_plot_multi(
   df,
@@ -34,5 +34,8 @@ the model names}
 A ggplot containing the calibration plot
 }
 \description{
-Multiple calibration plots with colored/shaded 95% confidence intervals
+Multiple calibration plots with colored/shaded 95 percent confidence intervals
+}
+\examples{
+cal_plot_multi(multi_model_dataset, outcome_var = 'outcomes',model_column = 'model_name', pred_var = 'predictions', n_bins = 5)
 }
