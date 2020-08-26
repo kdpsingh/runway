@@ -1,0 +1,69 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# runway
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of runway is to generate statistics and plots to calculate discrimination, calibration, and decision curves for prediction models.
+
+## Installation
+
+You can install `runway` from GitHub with:
+
+```{r eval=FALSE}
+remotes::install_github('ML4LHS/runway')
+```
+
+## Load the packge
+
+First, load the package.
+
+```{r}
+library(runway)
+```
+
+## Sample datasets
+
+Runway comes with two sample datasets.
+
+```{r}
+data(single_model_dataset)
+head(single_model_dataset)
+
+data(multi_model_dataset)
+head(multi_model_dataset)
+```
+
+## Single model calibration plot
+
+```{r}
+cal_plot(single_model_dataset,
+         outcome_var = 'outcomes', 
+         pred_var = 'predictions',
+         n_bins = 5)
+```
+
+
+## Multi-model calibration plot
+
+```{r}
+cal_plot_multi(multi_model_dataset,
+         outcome_var = 'outcomes',
+         model_column = 'model_name',
+         pred_var = 'predictions',
+         n_bins = 5)
+```

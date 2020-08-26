@@ -1,0 +1,20 @@
+Package: runway
+Type: Package
+Title: Evaluation and Comparison of Prediction Models
+Version: 0.0.0.9000
+Author: Karandeep Singh
+Maintainer: Karandeep Singh <kdpsingh@umich.edu>
+Description: Generate statistics and plots to calculate discrimination, calibration,
+    and decision curves for prediction models. 
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    dplyr,
+    ggplot2,
+    magrittr,
+    ggeasy,
+    patchwork
+RoxygenNote: 7.1.0
+Depends: 
+    R (>= 2.10)
