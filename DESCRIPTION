@@ -14,7 +14,8 @@ Imports:
     ggplot2,
     magrittr,
     ggeasy,
-    patchwork
+    patchwork,
+    scales
 RoxygenNote: 7.1.0
 Depends: 
     R (>= 2.10)

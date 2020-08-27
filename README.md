@@ -56,22 +56,22 @@ head(multi_model_dataset)
 
 ``` r
 cal_plot(single_model_dataset,
-         outcome_var = 'outcomes', 
-         pred_var = 'predictions',
+         outcome = 'outcomes', 
+         prediction = 'predictions',
          n_bins = 5)
 #> Warning: Removed 2 rows containing missing values (geom_bar).
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 ## Multi-model calibration plot
 
 ``` r
 cal_plot_multi(multi_model_dataset,
-         outcome_var = 'outcomes',
-         model_column = 'model_name',
-         pred_var = 'predictions',
+         outcome = 'outcomes',
+         prediction = 'predictions',
+         model = 'model_name',
          n_bins = 5)
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />

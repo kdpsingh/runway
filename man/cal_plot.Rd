@@ -4,15 +4,15 @@
 \alias{cal_plot}
 \title{A single calibration plot with error bars showing 95 percent confidence intervals}
 \usage{
-cal_plot(df, outcome_var, pred_var, n_bins = 10, plot_title = "", ...)
+cal_plot(df, outcome, prediction, n_bins = 10, plot_title = "", ...)
 }
 \arguments{
 \item{df}{The df as a data.frame.}
 
-\item{outcome_var}{A character string containing the name of the column containing
-the predictions.}
+\item{outcome}{A character string containing the name of the column containing
+the outcomes (expressed as 0/1s).}
 
-\item{pred_var}{A character string containing the name of the column containing
+\item{prediction}{A character string containing the name of the column containing
 the predictions.}
 
 \item{n_bins}{Number of bins. Defaults to 10.}
@@ -26,5 +26,5 @@ A ggplot containing the calibration plot
 A single calibration plot with error bars showing 95 percent confidence intervals
 }
 \examples{
-cal_plot(single_model_dataset, outcome_var = 'outcomes', pred_var = 'predictions', n_bins = 5)
+cal_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions', n_bins = 5)
 }

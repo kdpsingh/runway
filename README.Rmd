@@ -52,8 +52,8 @@ head(multi_model_dataset)
 
 ```{r}
 cal_plot(single_model_dataset,
-         outcome_var = 'outcomes', 
-         pred_var = 'predictions',
+         outcome = 'outcomes', 
+         prediction = 'predictions',
          n_bins = 5)
 ```
 
@@ -62,8 +62,8 @@ cal_plot(single_model_dataset,
 
 ```{r}
 cal_plot_multi(multi_model_dataset,
-         outcome_var = 'outcomes',
-         model_column = 'model_name',
-         pred_var = 'predictions',
+         outcome = 'outcomes',
+         prediction = 'predictions',
+         model = 'model_name',
          n_bins = 5)
 ```

@@ -6,9 +6,9 @@
 \usage{
 cal_plot_multi(
   df,
-  outcome_var,
-  pred_var,
-  model_column,
+  outcome,
+  prediction,
+  model,
   n_bins = 10,
   plot_title = "",
   ...
@@ -17,13 +17,13 @@ cal_plot_multi(
 \arguments{
 \item{df}{The df as a data.frame.}
 
-\item{outcome_var}{A character string containing the name of the column containing
+\item{outcome}{A character string containing the name of the column containing
+the outcomes (expressed as 0/1s).}
+
+\item{prediction}{A character string containing the name of the column containing
 the predictions.}
 
-\item{pred_var}{A character string containing the name of the column containing
-the predictions.}
-
-\item{model_column}{A character string containing the name of the column containing
+\item{model}{A character string containing the name of the column containing
 the model names}
 
 \item{n_bins}{Number of bins. Defaults to 10.}
@@ -37,5 +37,5 @@ A ggplot containing the calibration plot
 Multiple calibration plots with colored/shaded 95 percent confidence intervals
 }
 \examples{
-cal_plot_multi(multi_model_dataset, outcome_var = 'outcomes',model_column = 'model_name', pred_var = 'predictions', n_bins = 5)
+cal_plot_multi(multi_model_dataset, outcome = 'outcomes',model = 'model_name', prediction = 'predictions', n_bins = 5)
 }
