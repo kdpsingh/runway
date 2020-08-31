@@ -28,7 +28,7 @@ You can install `runway` from GitHub with:
 remotes::install_github('ML4LHS/runway')
 ```
 
-## Load the packge
+## Load the package
 
 First, load the package.
 
@@ -48,7 +48,17 @@ data(multi_model_dataset)
 head(multi_model_dataset)
 ```
 
-## Single model calibration plot
+
+## Threshold-performance plot (single model)
+
+```{r}
+threshperf_plot(single_model_dataset,
+         outcome = 'outcomes',
+         prediction = 'predictions')
+```
+
+
+## Calibration plot (single model)
 
 ```{r}
 cal_plot(single_model_dataset,
@@ -58,7 +68,7 @@ cal_plot(single_model_dataset,
 ```
 
 
-## Multi-model calibration plot
+## Calibration plot (multiple models)
 
 ```{r}
 cal_plot_multi(multi_model_dataset,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cal_plots.R
 \name{cal_plot}
 \alias{cal_plot}
-\title{A single calibration plot with error bars showing 95 percent confidence intervals}
+\title{Generate a single calibration plot with error bars showing 95 percent confidence intervals}
 \usage{
 cal_plot(df, outcome, prediction, n_bins = 10, plot_title = "", ...)
 }
@@ -23,7 +23,7 @@ the predictions.}
 A ggplot containing the calibration plot
 }
 \description{
-A single calibration plot with error bars showing 95 percent confidence intervals
+Generate a single calibration plot with error bars showing 95 percent confidence intervals
 }
 \examples{
 cal_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions', n_bins = 5)

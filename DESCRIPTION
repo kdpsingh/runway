@@ -15,7 +15,8 @@ Imports:
     magrittr,
     ggeasy,
     patchwork,
-    scales
+    scales,
+    yardstick
 RoxygenNote: 7.1.0
 Depends: 
     R (>= 2.10)

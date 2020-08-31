@@ -18,7 +18,7 @@ You can install `runway` from GitHub with:
 remotes::install_github('ML4LHS/runway')
 ```
 
-## Load the packge
+## Load the package
 
 First, load the package.
 
@@ -52,7 +52,17 @@ head(multi_model_dataset)
 #> 6        0        0.42    Model 2
 ```
 
-## Single model calibration plot
+## Threshold-performance plot (single model)
+
+``` r
+threshperf_plot(single_model_dataset,
+         outcome = 'outcomes',
+         prediction = 'predictions')
+```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+
+## Calibration plot (single model)
 
 ``` r
 cal_plot(single_model_dataset,
@@ -62,9 +72,9 @@ cal_plot(single_model_dataset,
 #> Warning: Removed 2 rows containing missing values (geom_bar).
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
-## Multi-model calibration plot
+## Calibration plot (multiple models)
 
 ``` r
 cal_plot_multi(multi_model_dataset,
@@ -74,4 +84,4 @@ cal_plot_multi(multi_model_dataset,
          n_bins = 5)
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
