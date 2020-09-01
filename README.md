@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
 The goal of runway is to generate statistics and plots to calculate
@@ -60,7 +62,7 @@ threshperf_plot(single_model_dataset,
          prediction = 'predictions')
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
 ## Calibration plot (single model)
 
@@ -72,7 +74,7 @@ cal_plot(single_model_dataset,
 #> Warning: Removed 2 rows containing missing values (geom_bar).
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 ## Calibration plot (multiple models)
 
@@ -84,4 +86,4 @@ cal_plot_multi(multi_model_dataset,
          n_bins = 5)
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />

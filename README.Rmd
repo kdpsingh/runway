@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # runway
 
 <!-- badges: start -->
+[![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
 The goal of runway is to generate statistics and plots to calculate discrimination, calibration, and decision curves for prediction models.

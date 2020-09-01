@@ -18,7 +18,9 @@ the predictions.}
 \item{plot_title}{A character string containing the title for the resulting plot.}
 }
 \value{
-A ggplot containing the threshold-performance plot
+A ggplot containing the threshold-performance plot. The 95 percent
+confidence intervals are estimated using Wilson's interval from the \code{Hmisc}
+\code{\link[Hmisc]{binconf}} function.
 }
 \description{
 Generate a threshold-performance plot for a single model

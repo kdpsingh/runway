@@ -23,9 +23,6 @@ recode_data <- function (obs, prob, threshold) {
 two_class = function (...) {
   mets <- yardstick::metric_set(yardstick::sens,
                                 yardstick::spec,
-                                yardstick::j_index,
-                                yardstick::accuracy,
-                                yardstick::bal_accuracy,
                                 yardstick::ppv,
                                 yardstick::npv)
   mets(...)
