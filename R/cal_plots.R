@@ -9,6 +9,7 @@
 #' @param plot_title A character string containing the title for the resulting plot.
 #' @return A ggplot containing the calibration plot
 #' @examples
+#' data(single_model_dataset)
 #' cal_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions', n_bins = 5)
 #' @export
 cal_plot <- function(df, outcome, prediction, n_bins = 10, plot_title = '', ...){
@@ -77,6 +78,7 @@ cal_plot <- function(df, outcome, prediction, n_bins = 10, plot_title = '', ...)
 #' @param plot_title A character string containing the title for the resulting plot.
 #' @return A ggplot containing the calibration plot
 #' @examples
+#' data(multi_model_dataset)
 #' cal_plot_multi(multi_model_dataset, outcome = 'outcomes',model = 'model_name', prediction = 'predictions', n_bins = 5)
 #' @export
 cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, plot_title = '', ...){

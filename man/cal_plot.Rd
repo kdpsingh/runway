@@ -26,5 +26,6 @@ A ggplot containing the calibration plot
 Generate a single calibration plot with error bars showing 95 percent confidence intervals
 }
 \examples{
+data(single_model_dataset)
 cal_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions', n_bins = 5)
 }

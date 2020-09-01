@@ -26,5 +26,6 @@ confidence intervals are estimated using Wilson's interval from the \code{Hmisc}
 Generate a threshold-performance plot for a single model
 }
 \examples{
+data(single_model_dataset)
 threshperf_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions')
 }

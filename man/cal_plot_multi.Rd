@@ -37,5 +37,6 @@ A ggplot containing the calibration plot
 Generate multiple calibration plots with colored/shaded 95 percent confidence intervals
 }
 \examples{
+data(multi_model_dataset)
 cal_plot_multi(multi_model_dataset, outcome = 'outcomes',model = 'model_name', prediction = 'predictions', n_bins = 5)
 }

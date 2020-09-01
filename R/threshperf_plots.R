@@ -13,6 +13,7 @@
 #' @return A data.frame containing the columns \code{.threshold}, \code{.metric},
 #' \code{.estimator}, and \code{.estimate}
 #' @examples
+#' data(single_model_dataset)
 #' threshperf(single_model_dataset, outcome = 'outcomes', prediction = 'predictions')
 #' @export
 threshperf <- function(df, outcome, prediction) {
@@ -49,7 +50,7 @@ threshperf <- function(df, outcome, prediction) {
     df_metrics %>%
     dplyr::group_by(.threshold) %>%
     dplyr::mutate(denom =
-             case_when(
+             dplyr::case_when(
                .metric == 'sens' ~ sum(df_orig[[outcome]] == 1),
                .metric == 'spec' ~ sum(df_orig[[outcome]] == 0),
                .metric == 'ppv' ~ sum(df_orig[[prediction]] >= .threshold),
@@ -82,13 +83,14 @@ threshperf <- function(df, outcome, prediction) {
 #' confidence intervals are estimated using Wilson's interval from the \code{Hmisc}
 #' \code{\link[Hmisc]{binconf}} function.
 #' @examples
+#' data(single_model_dataset)
 #' threshperf_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions')
 #' @export
 threshperf_plot <- function(df, outcome, prediction, plot_title = '') {
   tp_data = threshperf(df, outcome, prediction)
   tp_plot =
     tp_data %>%
-    dplyr::mutate(.metric = case_when(
+    dplyr::mutate(.metric = dplyr::case_when(
                                .metric == 'npv' ~ 'NPV',
                                .metric == 'ppv' ~ 'PPV',
                                .metric == 'spec' ~ 'Specificity',

@@ -26,5 +26,6 @@ but expands the capability to allow for the range of metrics to include positive
 negative predictive value.
 }
 \examples{
+data(single_model_dataset)
 threshperf(single_model_dataset, outcome = 'outcomes', prediction = 'predictions')
 }
