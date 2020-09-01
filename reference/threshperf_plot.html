@@ -149,10 +149,8 @@ confidence intervals are estimated using Wilson's interval from the <code>Hmisc<
 <code><a href='https://rdrr.io/pkg/Hmisc/man/binconf.html'>binconf</a></code> function.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>threshperf_plot</span>(<span class='no'>single_model_dataset</span>, <span class='kw'>outcome</span> <span class='kw'>=</span> <span class='st'>'outcomes'</span>, <span class='kw'>prediction</span> <span class='kw'>=</span> <span class='st'>'predictions'</span>)</div><div class='output co'>#&gt; <span class='error'>Error: Problem with `mutate()` input `denom`.</span>
-#&gt; <span class='error'><span style='color: #BB0000;'>✖</span><span> could not find function "case_when"</span>
-#&gt; <span class='error'></span><span style='color: #0000BB;'>ℹ</span><span> Input `denom` is `case_when(...)`.</span>
-#&gt; <span class='error'></span><span style='color: #0000BB;'>ℹ</span><span> The error occurred in group 1: .threshold = 0.</span></div></span></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>single_model_dataset</span>)
+<span class='fu'>threshperf_plot</span>(<span class='no'>single_model_dataset</span>, <span class='kw'>outcome</span> <span class='kw'>=</span> <span class='st'>'outcomes'</span>, <span class='kw'>prediction</span> <span class='kw'>=</span> <span class='st'>'predictions'</span>)</div><div class='output co'>#&gt; <span class='error'>Error in vars(ul, ll): could not find function "vars"</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
