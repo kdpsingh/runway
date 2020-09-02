@@ -54,8 +54,18 @@ head(multi_model_dataset)
 
 ```{r}
 threshperf_plot(single_model_dataset,
-         outcome = 'outcomes',
-         prediction = 'predictions')
+                outcome = 'outcomes',
+                prediction = 'predictions')
+```
+
+
+## Threshold-performance plot (multiple models)
+
+```{r}
+threshperf_plot_multi(multi_model_dataset,
+                      outcome = 'outcomes',
+                      prediction = 'predictions',
+                      model = 'model_name')
 ```
 
 

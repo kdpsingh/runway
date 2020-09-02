@@ -58,11 +58,22 @@ head(multi_model_dataset)
 
 ``` r
 threshperf_plot(single_model_dataset,
-         outcome = 'outcomes',
-         prediction = 'predictions')
+                outcome = 'outcomes',
+                prediction = 'predictions')
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
+## Threshold-performance plot (multiple models)
+
+``` r
+threshperf_plot_multi(multi_model_dataset,
+                      outcome = 'outcomes',
+                      prediction = 'predictions',
+                      model = 'model_name')
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 ## Calibration plot (single model)
 
@@ -74,7 +85,7 @@ cal_plot(single_model_dataset,
 #> Warning: Removed 2 rows containing missing values (geom_bar).
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
 
 ## Calibration plot (multiple models)
 
@@ -86,4 +97,4 @@ cal_plot_multi(multi_model_dataset,
          n_bins = 5)
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />

@@ -24,7 +24,7 @@ cal_plot <- function(df, outcome, prediction, n_bins = 10, plot_title = '', ...)
            se = sqrt((bin_prob * (1 - bin_prob)) / n),
            ul = bin_prob + 1.96 * se,
            ll = bin_prob - 1.96 * se) %>%
-    dplyr::mutate_at(vars(ul, ll), . %>% scales::oob_squish(range = c(0,1))) %>%
+    dplyr::mutate_at(dplyr::vars(ul, ll), . %>% scales::oob_squish(range = c(0,1))) %>%
     dplyr::ungroup() %>%
     ggplot2::ggplot(ggplot2::aes(x = bin_pred, y = bin_prob, ymin = ll, ymax = ul)) +
     ggplot2::geom_errorbar(size = 0.5, color = "black", width = 0.02) +
@@ -97,7 +97,7 @@ cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, plot_tit
            se = sqrt((bin_prob * (1 - bin_prob)) / n),
            ul = bin_prob + 1.96 * se,
            ll = bin_prob - 1.96 * se) %>%
-    dplyr::mutate_at(vars(ul, ll), . %>% scales::oob_squish(range = c(0,1))) %>%
+    dplyr::mutate_at(dplyr::vars(ul, ll), . %>% scales::oob_squish(range = c(0,1))) %>%
     dplyr::ungroup() %>%
     ggplot2::ggplot(ggplot2::aes(x = bin_pred,
                         y = bin_prob,

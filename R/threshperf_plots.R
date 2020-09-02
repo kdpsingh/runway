@@ -64,9 +64,9 @@ threshperf <- function(df, outcome, prediction) {
                          alpha = 0.05, method = 'wilson') %>%
     dplyr::as_tibble() %>%
     dplyr::rename(ll = Lower, ul = Upper) %>%
-    dplyr::mutate_at(vars(ul, ll), . %>% scales::oob_squish(range = c(0,1)))
+    dplyr::mutate_at(dplyr::vars(ul, ll), . %>% scales::oob_squish(range = c(0,1)))
 
-    df_metrics = bind_cols(df_metrics, df_ci)
+    df_metrics = dplyr::bind_cols(df_metrics, df_ci)
 
   data.frame(df_metrics, check.names = FALSE, stringsAsFactors = FALSE)
 }
@@ -96,7 +96,7 @@ threshperf_plot <- function(df, outcome, prediction, plot_title = '') {
                                .metric == 'spec' ~ 'Specificity',
                                .metric == 'sens' ~ 'Sensitivity')) %>%
     dplyr::mutate(.metric = factor(.metric, levels = c('Sensitivity', 'Specificity', 'PPV', 'NPV'))) %>%
-    dplyr::mutate_at(vars(.estimate, ll, ul), . %>% {. * 100}) %>%
+    dplyr::mutate_at(dplyr::vars(.estimate, ll, ul), . %>% {. * 100}) %>%
     ggplot2::ggplot(ggplot2::aes(x = .threshold,
                                  y = .estimate,
                                  ymin = ll,
@@ -119,4 +119,81 @@ threshperf_plot <- function(df, outcome, prediction, plot_title = '') {
     (tp_plot / threshold_dist_plot + patchwork::plot_layout(heights = c(10,1))) +
     patchwork::plot_spacer() +
    patchwork::plot_layout(widths = c(1,2,1))
+}
+
+#' Generate a threshold-performance plot for multiple models with colored/shaded 95 percent confidence intervals
+#'
+#' @param df The df as a data.frame.
+#' @param outcome A character string containing the name of the column containing
+#' the outcomes (expressed as 0/1s).
+#' @param prediction A character string containing the name of the column containing
+#' the predictions.
+#' @param model A character string containing the name of the column containing
+#' the model names
+#' @param plot_title A character string containing the title for the resulting plot.
+#' @return A ggplot containing the threshold-performance plot. The 95 percent
+#' confidence intervals are estimated using Wilson's interval from the \code{Hmisc}
+#' \code{\link[Hmisc]{binconf}} function.
+#' @examples
+#' data(multi_model_dataset)
+#' threshperf_plot_multi(multi_model_dataset, outcome = 'outcomes', prediction = 'predictions', model = 'model_name')
+#' @export
+threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '') {
+
+  how_many_models = df[[model]] %>% unique() %>% length()
+
+  tp_data_list = list()
+  for (model_name in unique(df[[model]])) {
+    tp_data_list[[model_name]] <-
+      threshperf(df[df[[model]] == model_name,],
+                 outcome,
+                 prediction)
+    tp_data_list[[model_name]][[model]] <- model_name
+  }
+
+  tp_data = dplyr::bind_rows(tp_data_list)
+
+  tp_plot =
+    tp_data %>%
+    dplyr::mutate(.metric = dplyr::case_when(
+      .metric == 'npv' ~ 'NPV',
+      .metric == 'ppv' ~ 'PPV',
+      .metric == 'spec' ~ 'Specificity',
+      .metric == 'sens' ~ 'Sensitivity')) %>%
+    dplyr::mutate(.metric = factor(.metric, levels = c('Sensitivity', 'Specificity', 'PPV', 'NPV'))) %>%
+    dplyr::mutate_at(dplyr::vars(.estimate, ll, ul), . %>% {. * 100}) %>%
+    ggplot2::ggplot(ggplot2::aes(x = .threshold,
+                                 y = .estimate,
+                                 ymin = ll,
+                                 ymax = ul,
+                                 color = get(model),
+                                 fill = get(model))) +
+    ggplot2::geom_ribbon(alpha = 1/how_many_models) +
+    ggplot2::geom_line(size = 1) +
+    ggplot2::facet_grid(.metric~.) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = 'Threshold', y = 'Performance (%)') +
+    ggplot2::scale_color_brewer(name = 'Models', palette = 'Set1') +
+    ggplot2::scale_fill_brewer(name = 'Models', palette = 'Set1') +
+    ggplot2::ggtitle(plot_title)
+
+  threshold_dist_plot <- ggplot2::ggplot(df, ggplot2::aes(x = get(prediction))) +
+    ggplot2::geom_density(alpha = 1/how_many_models, ggplot2::aes(fill = get(model), color = get(model))) +
+    ggplot2::scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
+    # scale_color_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
+    # scale_fill_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
+    ggplot2::xlab("") +
+    ggplot2::ylab("") +
+    ggplot2::scale_color_brewer(palette = 'Set1') +
+    ggplot2::scale_fill_brewer(palette = 'Set1') +
+    ggplot2::theme_minimal() +
+    ggeasy::easy_remove_y_axis() +
+    #  easy_remove_x_axis(what = c('ticks','line')) +
+    ggeasy::easy_remove_legend(fill, color) +
+    ggplot2::theme_void()
+
+  patchwork::plot_spacer() +
+    (tp_plot / threshold_dist_plot + patchwork::plot_layout(heights = c(10,1))) +
+    patchwork::plot_spacer() +
+    patchwork::plot_layout(widths = c(1,2,1))
 }
