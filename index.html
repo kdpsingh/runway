@@ -113,29 +113,38 @@
 <h2 class="hasAnchor">
 <a href="#threshold-performance-plot-single-model" class="anchor"></a>Threshold-performance plot (single model)</h2>
 <div class="sourceCode" id="cb4"><pre class="r"><span class="fu"><a href="reference/threshperf_plot.html">threshperf_plot</a></span>(<span class="no">single_model_dataset</span>,
-         <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
-         <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>)</pre></div>
+                <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
+                <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>)</pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"></p>
+</div>
+<div id="threshold-performance-plot-multiple-models" class="section level2">
+<h2 class="hasAnchor">
+<a href="#threshold-performance-plot-multiple-models" class="anchor"></a>Threshold-performance plot (multiple models)</h2>
+<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="reference/threshperf_plot_multi.html">threshperf_plot_multi</a></span>(<span class="no">multi_model_dataset</span>,
+                      <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
+                      <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
+                      <span class="kw">model</span> <span class="kw">=</span> <span class="st">'model_name'</span>)</pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
 </div>
 <div id="calibration-plot-single-model" class="section level2">
 <h2 class="hasAnchor">
 <a href="#calibration-plot-single-model" class="anchor"></a>Calibration plot (single model)</h2>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="reference/cal_plot.html">cal_plot</a></span>(<span class="no">single_model_dataset</span>,
+<div class="sourceCode" id="cb6"><pre class="r"><span class="fu"><a href="reference/cal_plot.html">cal_plot</a></span>(<span class="no">single_model_dataset</span>,
          <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
          <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
          <span class="kw">n_bins</span> <span class="kw">=</span> <span class="fl">5</span>)
 <span class="co">#&gt; Warning: Removed 2 rows containing missing values (geom_bar).</span></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-7-1.png" width="100%"></p>
 </div>
 <div id="calibration-plot-multiple-models" class="section level2">
 <h2 class="hasAnchor">
 <a href="#calibration-plot-multiple-models" class="anchor"></a>Calibration plot (multiple models)</h2>
-<div class="sourceCode" id="cb6"><pre class="r"><span class="fu"><a href="reference/cal_plot_multi.html">cal_plot_multi</a></span>(<span class="no">multi_model_dataset</span>,
+<div class="sourceCode" id="cb7"><pre class="r"><span class="fu"><a href="reference/cal_plot_multi.html">cal_plot_multi</a></span>(<span class="no">multi_model_dataset</span>,
          <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
          <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
          <span class="kw">model</span> <span class="kw">=</span> <span class="st">'model_name'</span>,
          <span class="kw">n_bins</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-7-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-8-1.png" width="100%"></p>
 </div>
 </div>
   </div>
