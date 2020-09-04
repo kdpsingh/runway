@@ -12,6 +12,18 @@ maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www
 The goal of runway is to generate statistics and plots to calculate
 discrimination, calibration, and decision curves for prediction models.
 
+## Why is it called runway?
+
+Because you can use it to visually compare models.
+
+Sometimes your models look quite different.
+
+![Models looking different](https://i.pinimg.com/originals/2e/3d/14/2e3d14e6f382c6850685b5aaaff34fec.gif)
+
+Other times your models look the same...
+
+![Models looking similar](https://pbs.twimg.com/media/Eg7RZKoXcAAhvKw?format=jpg&name=360x360)
+
 ## Installation
 
 You can install `runway` from GitHub with:
