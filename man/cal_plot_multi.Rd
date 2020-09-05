@@ -10,6 +10,7 @@ cal_plot_multi(
   prediction,
   model,
   n_bins = 10,
+  show_loess = FALSE,
   plot_title = "",
   ...
 )
@@ -26,7 +27,12 @@ the predictions.}
 \item{model}{A character string containing the name of the column containing
 the model names}
 
-\item{n_bins}{Number of bins. Defaults to 10.}
+\item{n_bins}{Number of bins. Defaults to 10. Set to 0 to hide binned calibration.}
+
+\item{show_loess}{Whether to show loess smoothed calibration estimates. Defaults to FALSE.
+For \code{cal_plot()}, you can display both a binned calibration plot and a loess curve. In
+contrast, for \code{cal_plot_multi()}, these options are mutually exclusive. To display a loess
+line, you must set \code{n_bins} to 0.}
 
 \item{plot_title}{A character string containing the title for the resulting plot.}
 }

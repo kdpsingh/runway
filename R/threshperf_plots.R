@@ -78,6 +78,8 @@ threshperf <- function(df, outcome, prediction) {
 #' the outcomes (expressed as 0/1s).
 #' @param prediction A character string containing the name of the column containing
 #' the predictions.
+#' @param show_denom Show the denominator (as a fraction of the maximum positives/negatives)
+#' for the positive predictive value (PPV) and negative predictive value (NPV).
 #' @param plot_title A character string containing the title for the resulting plot.
 #' @return A ggplot containing the threshold-performance plot. The 95 percent
 #' confidence intervals are estimated using Wilson's interval from the \code{Hmisc}
@@ -86,8 +88,17 @@ threshperf <- function(df, outcome, prediction) {
 #' data(single_model_dataset)
 #' threshperf_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions')
 #' @export
-threshperf_plot <- function(df, outcome, prediction, plot_title = '') {
+threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_title = '') {
   tp_data = threshperf(df, outcome, prediction)
+
+    tp_data =
+    tp_data %>%
+    dplyr::group_by(.metric) %>%
+    dplyr::mutate(denom_frac =
+                    dplyr::if_else(.metric %in% c('ppv', 'npv'),
+                            denom/max(denom), NA_real_, NA_real_)) %>%
+    dplyr::ungroup()
+
   tp_plot =
     tp_data %>%
     dplyr::mutate(.metric = dplyr::case_when(
@@ -100,8 +111,16 @@ threshperf_plot <- function(df, outcome, prediction, plot_title = '') {
     ggplot2::ggplot(ggplot2::aes(x = .threshold,
                                  y = .estimate,
                                  ymin = ll,
-                                 ymax = ul)) +
-    ggplot2::geom_ribbon(fill = 'lightgrey') +
+                                 ymax = ul))
+
+  if (show_denom) {
+    tp_plot =
+      tp_plot +
+      ggplot2::geom_ribbon(ggplot2::aes(ymin = 0, ymax = denom_frac*100), fill = 'grey90')
+  }
+
+  tp_plot = tp_plot +
+    ggplot2::geom_ribbon(fill = 'grey') +
     ggplot2::geom_line(size = 1) +
     ggplot2::facet_grid(.metric~.) +
     ggplot2::theme_bw() +

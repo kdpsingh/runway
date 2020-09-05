@@ -54,7 +54,9 @@ head(multi_model_dataset)
 #> 6        0        0.42    Model 2
 ```
 
-## Threshold-performance plot (single model)
+## Evaluating a single model
+
+### Threshold-performance plot (single model)
 
 ``` r
 threshperf_plot(single_model_dataset,
@@ -64,7 +66,55 @@ threshperf_plot(single_model_dataset,
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
-## Threshold-performance plot (multiple models)
+### Calibration plot with 10 bins (single model)
+
+Note: 10 bins is the default.
+
+``` r
+cal_plot(single_model_dataset,
+         outcome = 'outcomes', 
+         prediction = 'predictions')
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
+### Calibration plot with 5 bins (single model)
+
+``` r
+cal_plot(single_model_dataset,
+         outcome = 'outcomes', 
+         prediction = 'predictions',
+         n_bins = 5)
+```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+
+### Calibration plot with 10 bins and loess curve (single model)
+
+``` r
+cal_plot(single_model_dataset,
+         outcome = 'outcomes', 
+         prediction = 'predictions',
+         show_loess = TRUE)
+```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+
+### Calibration plot with loess curve only (single model)
+
+``` r
+cal_plot(single_model_dataset,
+         outcome = 'outcomes', 
+         prediction = 'predictions',
+         n_bins = 0,
+         show_loess = TRUE)
+```
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+
+## Comparing multiple models
+
+### Threshold-performance plot (multiple models)
 
 ``` r
 threshperf_plot_multi(multi_model_dataset,
@@ -73,21 +123,22 @@ threshperf_plot_multi(multi_model_dataset,
                       model = 'model_name')
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
 
-## Calibration plot (single model)
+### Calibration plot with 10 bins (multiple models)
+
+Note: 10 bins is the default.
 
 ``` r
-cal_plot(single_model_dataset,
-         outcome = 'outcomes', 
+cal_plot_multi(multi_model_dataset,
+         outcome = 'outcomes',
          prediction = 'predictions',
-         n_bins = 5)
-#> Warning: Removed 2 rows containing missing values (geom_bar).
+         model = 'model_name')
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
 
-## Calibration plot (multiple models)
+## Calibration plot with 5 bins (multiple models)
 
 ``` r
 cal_plot_multi(multi_model_dataset,
@@ -97,4 +148,21 @@ cal_plot_multi(multi_model_dataset,
          n_bins = 5)
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
+
+## Calibration plot with loess curve (multiple models)
+
+Unlike single calibration plots, the choice of binned calibration and
+loess calibration are mutually exclusive. To show less curves, you must
+set `show_loess` to `TRUE` *and* `n_bins` to `0`.
+
+``` r
+cal_plot_multi(multi_model_dataset,
+         outcome = 'outcomes',
+         prediction = 'predictions',
+         model = 'model_name',
+         n_bins = 0,
+         show_loess = TRUE)
+```
+
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />

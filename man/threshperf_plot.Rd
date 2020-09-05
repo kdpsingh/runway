@@ -4,7 +4,7 @@
 \alias{threshperf_plot}
 \title{Generate a threshold-performance plot for a single model}
 \usage{
-threshperf_plot(df, outcome, prediction, plot_title = "")
+threshperf_plot(df, outcome, prediction, show_denom = TRUE, plot_title = "")
 }
 \arguments{
 \item{df}{The df as a data.frame.}
@@ -14,6 +14,9 @@ the outcomes (expressed as 0/1s).}
 
 \item{prediction}{A character string containing the name of the column containing
 the predictions.}
+
+\item{show_denom}{Show the denominator (as a fraction of the maximum positives/negatives)
+for the positive predictive value (PPV) and negative predictive value (NPV).}
 
 \item{plot_title}{A character string containing the title for the resulting plot.}
 }
