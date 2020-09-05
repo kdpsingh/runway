@@ -118,42 +118,99 @@
 <span class="co">#&gt; 5        0        0.31    Model 1</span>
 <span class="co">#&gt; 6        0        0.42    Model 2</span></pre></div>
 </div>
-<div id="threshold-performance-plot-single-model" class="section level2">
+<div id="evaluating-a-single-model" class="section level2">
 <h2 class="hasAnchor">
-<a href="#threshold-performance-plot-single-model" class="anchor"></a>Threshold-performance plot (single model)</h2>
+<a href="#evaluating-a-single-model" class="anchor"></a>Evaluating a single model</h2>
+<div id="threshold-performance-plot-single-model" class="section level3">
+<h3 class="hasAnchor">
+<a href="#threshold-performance-plot-single-model" class="anchor"></a>Threshold-performance plot (single model)</h3>
 <div class="sourceCode" id="cb4"><pre class="r"><span class="fu"><a href="reference/threshperf_plot.html">threshperf_plot</a></span>(<span class="no">single_model_dataset</span>,
                 <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
                 <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>)</pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"></p>
 </div>
-<div id="threshold-performance-plot-multiple-models" class="section level2">
-<h2 class="hasAnchor">
-<a href="#threshold-performance-plot-multiple-models" class="anchor"></a>Threshold-performance plot (multiple models)</h2>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="reference/threshperf_plot_multi.html">threshperf_plot_multi</a></span>(<span class="no">multi_model_dataset</span>,
-                      <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
-                      <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
-                      <span class="kw">model</span> <span class="kw">=</span> <span class="st">'model_name'</span>)</pre></div>
+<div id="calibration-plot-with-10-bins-single-model" class="section level3">
+<h3 class="hasAnchor">
+<a href="#calibration-plot-with-10-bins-single-model" class="anchor"></a>Calibration plot with 10 bins (single model)</h3>
+<p>Note: 10 bins is the default.</p>
+<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="reference/cal_plot.html">cal_plot</a></span>(<span class="no">single_model_dataset</span>,
+         <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
+         <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>)</pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
 </div>
-<div id="calibration-plot-single-model" class="section level2">
-<h2 class="hasAnchor">
-<a href="#calibration-plot-single-model" class="anchor"></a>Calibration plot (single model)</h2>
+<div id="calibration-plot-with-5-bins-single-model" class="section level3">
+<h3 class="hasAnchor">
+<a href="#calibration-plot-with-5-bins-single-model" class="anchor"></a>Calibration plot with 5 bins (single model)</h3>
 <div class="sourceCode" id="cb6"><pre class="r"><span class="fu"><a href="reference/cal_plot.html">cal_plot</a></span>(<span class="no">single_model_dataset</span>,
          <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
          <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
-         <span class="kw">n_bins</span> <span class="kw">=</span> <span class="fl">5</span>)
-<span class="co">#&gt; Warning: Removed 2 rows containing missing values (geom_bar).</span></pre></div>
+         <span class="kw">n_bins</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-7-1.png" width="100%"></p>
 </div>
-<div id="calibration-plot-multiple-models" class="section level2">
+<div id="calibration-plot-with-10-bins-and-loess-curve-single-model" class="section level3">
+<h3 class="hasAnchor">
+<a href="#calibration-plot-with-10-bins-and-loess-curve-single-model" class="anchor"></a>Calibration plot with 10 bins and loess curve (single model)</h3>
+<div class="sourceCode" id="cb7"><pre class="r"><span class="fu"><a href="reference/cal_plot.html">cal_plot</a></span>(<span class="no">single_model_dataset</span>,
+         <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
+         <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
+         <span class="kw">show_loess</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-8-1.png" width="100%"></p>
+</div>
+<div id="calibration-plot-with-loess-curve-only-single-model" class="section level3">
+<h3 class="hasAnchor">
+<a href="#calibration-plot-with-loess-curve-only-single-model" class="anchor"></a>Calibration plot with loess curve only (single model)</h3>
+<div class="sourceCode" id="cb8"><pre class="r"><span class="fu"><a href="reference/cal_plot.html">cal_plot</a></span>(<span class="no">single_model_dataset</span>,
+         <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
+         <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
+         <span class="kw">n_bins</span> <span class="kw">=</span> <span class="fl">0</span>,
+         <span class="kw">show_loess</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-9-1.png" width="100%"></p>
+</div>
+</div>
+<div id="comparing-multiple-models" class="section level2">
 <h2 class="hasAnchor">
-<a href="#calibration-plot-multiple-models" class="anchor"></a>Calibration plot (multiple models)</h2>
-<div class="sourceCode" id="cb7"><pre class="r"><span class="fu"><a href="reference/cal_plot_multi.html">cal_plot_multi</a></span>(<span class="no">multi_model_dataset</span>,
+<a href="#comparing-multiple-models" class="anchor"></a>Comparing multiple models</h2>
+<div id="threshold-performance-plot-multiple-models" class="section level3">
+<h3 class="hasAnchor">
+<a href="#threshold-performance-plot-multiple-models" class="anchor"></a>Threshold-performance plot (multiple models)</h3>
+<div class="sourceCode" id="cb9"><pre class="r"><span class="fu"><a href="reference/threshperf_plot_multi.html">threshperf_plot_multi</a></span>(<span class="no">multi_model_dataset</span>,
+                      <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
+                      <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
+                      <span class="kw">model</span> <span class="kw">=</span> <span class="st">'model_name'</span>)</pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-10-1.png" width="100%"></p>
+</div>
+<div id="calibration-plot-with-10-bins-multiple-models" class="section level3">
+<h3 class="hasAnchor">
+<a href="#calibration-plot-with-10-bins-multiple-models" class="anchor"></a>Calibration plot with 10 bins (multiple models)</h3>
+<p>Note: 10 bins is the default.</p>
+<div class="sourceCode" id="cb10"><pre class="r"><span class="fu"><a href="reference/cal_plot_multi.html">cal_plot_multi</a></span>(<span class="no">multi_model_dataset</span>,
+         <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
+         <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
+         <span class="kw">model</span> <span class="kw">=</span> <span class="st">'model_name'</span>)</pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-11-1.png" width="100%"></p>
+</div>
+</div>
+<div id="calibration-plot-with-5-bins-multiple-models" class="section level2">
+<h2 class="hasAnchor">
+<a href="#calibration-plot-with-5-bins-multiple-models" class="anchor"></a>Calibration plot with 5 bins (multiple models)</h2>
+<div class="sourceCode" id="cb11"><pre class="r"><span class="fu"><a href="reference/cal_plot_multi.html">cal_plot_multi</a></span>(<span class="no">multi_model_dataset</span>,
          <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
          <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
          <span class="kw">model</span> <span class="kw">=</span> <span class="st">'model_name'</span>,
          <span class="kw">n_bins</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-8-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-12-1.png" width="100%"></p>
+</div>
+<div id="calibration-plot-with-loess-curve-multiple-models" class="section level2">
+<h2 class="hasAnchor">
+<a href="#calibration-plot-with-loess-curve-multiple-models" class="anchor"></a>Calibration plot with loess curve (multiple models)</h2>
+<p>Unlike single calibration plots, the choice of binned calibration and loess calibration are mutually exclusive. To show less curves, you must set <code>show_loess</code> to <code>TRUE</code> <em>and</em> <code>n_bins</code> to <code>0</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="r"><span class="fu"><a href="reference/cal_plot_multi.html">cal_plot_multi</a></span>(<span class="no">multi_model_dataset</span>,
+         <span class="kw">outcome</span> <span class="kw">=</span> <span class="st">'outcomes'</span>,
+         <span class="kw">prediction</span> <span class="kw">=</span> <span class="st">'predictions'</span>,
+         <span class="kw">model</span> <span class="kw">=</span> <span class="st">'model_name'</span>,
+         <span class="kw">n_bins</span> <span class="kw">=</span> <span class="fl">0</span>,
+         <span class="kw">show_loess</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-13-1.png" width="100%"></p>
 </div>
 </div>
   </div>

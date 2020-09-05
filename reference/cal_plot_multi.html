@@ -123,6 +123,7 @@
   <span class='no'>prediction</span>,
   <span class='no'>model</span>,
   <span class='kw'>n_bins</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>show_loess</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>plot_title</span> <span class='kw'>=</span> <span class='st'>""</span>,
   <span class='no'>...</span>
 )</pre>
@@ -151,7 +152,14 @@ the model names</p></td>
     </tr>
     <tr>
       <th>n_bins</th>
-      <td><p>Number of bins. Defaults to 10.</p></td>
+      <td><p>Number of bins. Defaults to 10. Set to 0 to hide binned calibration.</p></td>
+    </tr>
+    <tr>
+      <th>show_loess</th>
+      <td><p>Whether to show loess smoothed calibration estimates. Defaults to FALSE.
+For <code><a href='cal_plot.html'>cal_plot()</a></code>, you can display both a binned calibration plot and a loess curve. In
+contrast, for <code>cal_plot_multi()</code>, these options are mutually exclusive. To display a loess
+line, you must set <code>n_bins</code> to 0.</p></td>
     </tr>
     <tr>
       <th>plot_title</th>

@@ -117,7 +117,15 @@
     <p>Generate a single calibration plot with error bars showing 95 percent confidence intervals</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cal_plot</span>(<span class='no'>df</span>, <span class='no'>outcome</span>, <span class='no'>prediction</span>, <span class='kw'>n_bins</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>plot_title</span> <span class='kw'>=</span> <span class='st'>""</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>cal_plot</span>(
+  <span class='no'>df</span>,
+  <span class='no'>outcome</span>,
+  <span class='no'>prediction</span>,
+  <span class='kw'>n_bins</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>show_loess</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>plot_title</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -138,7 +146,13 @@ the predictions.</p></td>
     </tr>
     <tr>
       <th>n_bins</th>
-      <td><p>Number of bins. Defaults to 10.</p></td>
+      <td><p>Number of bins. Defaults to 10. Set to 0 to hide binned calibration.</p></td>
+    </tr>
+    <tr>
+      <th>show_loess</th>
+      <td><p>Whether to show loess smoothed calibration estimates. Defaults to FALSE.
+For <code>cal_plot()</code>, you can display both a binned calibration plot and a loess curve. In
+contrast, for <code><a href='cal_plot_multi.html'>cal_plot_multi()</a></code>, these options are mutually exclusive.</p></td>
     </tr>
     <tr>
       <th>plot_title</th>
@@ -152,7 +166,7 @@ the predictions.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>single_model_dataset</span>)
-<span class='fu'>cal_plot</span>(<span class='no'>single_model_dataset</span>, <span class='kw'>outcome</span> <span class='kw'>=</span> <span class='st'>'outcomes'</span>, <span class='kw'>prediction</span> <span class='kw'>=</span> <span class='st'>'predictions'</span>, <span class='kw'>n_bins</span> <span class='kw'>=</span> <span class='fl'>5</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 2 rows containing missing values (geom_bar).</span></div><div class='img'><img src='cal_plot-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'>cal_plot</span>(<span class='no'>single_model_dataset</span>, <span class='kw'>outcome</span> <span class='kw'>=</span> <span class='st'>'outcomes'</span>, <span class='kw'>prediction</span> <span class='kw'>=</span> <span class='st'>'predictions'</span>, <span class='kw'>n_bins</span> <span class='kw'>=</span> <span class='fl'>5</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Ignoring unknown aesthetics: ymin, ymax</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 2 rows containing missing values (geom_bar).</span></div><div class='img'><img src='cal_plot-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
