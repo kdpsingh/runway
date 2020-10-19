@@ -1,15 +1,22 @@
-#' Generate a single calibration plot with error bars showing 95 percent confidence intervals
+#' Generate a single calibration plot with error bars showing 95 percent
+#' confidence intervals
+#'
+#' This code builds off of code written by Darren Dahly, PhD in this blog post:
+#' \url{https://darrendahly.github.io/post/homr/}.
 #'
 #' @param df The df as a data.frame.
-#' @param outcome A character string containing the name of the column containing
-#' the outcomes (expressed as 0/1s).
-#' @param prediction A character string containing the name of the column containing
-#' the predictions.
-#' @param n_bins Number of bins. Defaults to 10. Set to 0 to hide binned calibration.
-#' @param show_loess Whether to show loess smoothed calibration estimates. Defaults to FALSE.
-#' For \code{cal_plot()}, you can display both a binned calibration plot and a loess curve. In
-#' contrast, for \code{cal_plot_multi()}, these options are mutually exclusive.
-#' @param plot_title A character string containing the title for the resulting plot.
+#' @param outcome A character string containing the name of the column
+#'   containing the outcomes (expressed as 0/1s).
+#' @param prediction A character string containing the name of the column
+#'   containing the predictions.
+#' @param n_bins Number of bins. Defaults to 10. Set to 0 to hide binned
+#'   calibration.
+#' @param show_loess Whether to show loess smoothed calibration estimates.
+#'   Defaults to FALSE. For \code{cal_plot()}, you can display both a binned
+#'   calibration plot and a loess curve. In contrast, for
+#'   \code{cal_plot_multi()}, these options are mutually exclusive.
+#' @param plot_title A character string containing the title for the resulting
+#'   plot.
 #' @return A ggplot containing the calibration plot
 #' @examples
 #' data(single_model_dataset)
@@ -81,6 +88,9 @@ cal_plot <- function(df, outcome, prediction, n_bins = 10, show_loess = FALSE, p
 
 
 #' Generate multiple calibration plots with colored/shaded 95 percent confidence intervals
+#'
+#' This code builds off of code written by Darren Dahly, PhD in this blog post:
+#' \url{https://darrendahly.github.io/post/homr/}.
 #'
 #' @param df The df as a data.frame.
 #' @param outcome A character string containing the name of the column containing
