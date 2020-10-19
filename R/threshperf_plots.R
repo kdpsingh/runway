@@ -37,9 +37,11 @@ threshperf <- function(df, outcome, prediction) {
   df <-
     df %>%
     expand_preds(threshold = thresholds,
-                 inc = c(outcome, prediction)) %>%
-    dplyr::mutate(alt_pred = recode_data(df[[outcome]], df[[prediction]], .threshold))
+                 inc = c(outcome, prediction))
 
+  df <-
+    df %>%
+    dplyr::mutate(alt_pred = recode_data(df[[outcome]], df[[prediction]], .threshold))
 
   df <- df %>% dplyr::group_by(.threshold)
 

@@ -18,11 +18,13 @@ Because you can use it to visually compare models.
 
 Sometimes your models look quite different.
 
-![Models looking different](https://i.pinimg.com/originals/2e/3d/14/2e3d14e6f382c6850685b5aaaff34fec.gif)
+![Models looking
+different](https://i.pinimg.com/originals/2e/3d/14/2e3d14e6f382c6850685b5aaaff34fec.gif)
 
-Other times your models look the same...
+Other times your models look the same…
 
-![Models looking similar](https://pbs.twimg.com/media/Eg7RZKoXcAAhvKw?format=jpg&name=360x360)
+![Models looking
+similar](https://pbs.twimg.com/media/Eg7RZKoXcAAhvKw?format=jpg&name=360x360)
 
 ## Installation
 

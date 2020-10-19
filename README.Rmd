@@ -47,7 +47,7 @@ remotes::install_github('ML4LHS/runway')
 
 First, load the package.
 
-```{r}
+```{r eval=FALSE}
 library(runway)
 ```
 
