@@ -40,7 +40,8 @@ line, you must set \code{n_bins} to 0.}
 A ggplot containing the calibration plot
 }
 \description{
-Generate multiple calibration plots with colored/shaded 95 percent confidence intervals
+This code builds off of code written by Darren Dahly, PhD in this blog post:
+\url{https://darrendahly.github.io/post/homr/}.
 }
 \examples{
 data(multi_model_dataset)

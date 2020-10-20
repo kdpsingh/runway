@@ -2,7 +2,8 @@
 % Please edit documentation in R/cal_plots.R
 \name{cal_plot}
 \alias{cal_plot}
-\title{Generate a single calibration plot with error bars showing 95 percent confidence intervals}
+\title{Generate a single calibration plot with error bars showing 95 percent
+confidence intervals}
 \usage{
 cal_plot(
   df,
@@ -17,25 +18,29 @@ cal_plot(
 \arguments{
 \item{df}{The df as a data.frame.}
 
-\item{outcome}{A character string containing the name of the column containing
-the outcomes (expressed as 0/1s).}
+\item{outcome}{A character string containing the name of the column
+containing the outcomes (expressed as 0/1s).}
 
-\item{prediction}{A character string containing the name of the column containing
-the predictions.}
+\item{prediction}{A character string containing the name of the column
+containing the predictions.}
 
-\item{n_bins}{Number of bins. Defaults to 10. Set to 0 to hide binned calibration.}
+\item{n_bins}{Number of bins. Defaults to 10. Set to 0 to hide binned
+calibration.}
 
-\item{show_loess}{Whether to show loess smoothed calibration estimates. Defaults to FALSE.
-For \code{cal_plot()}, you can display both a binned calibration plot and a loess curve. In
-contrast, for \code{cal_plot_multi()}, these options are mutually exclusive.}
+\item{show_loess}{Whether to show loess smoothed calibration estimates.
+Defaults to FALSE. For \code{cal_plot()}, you can display both a binned
+calibration plot and a loess curve. In contrast, for
+\code{cal_plot_multi()}, these options are mutually exclusive.}
 
-\item{plot_title}{A character string containing the title for the resulting plot.}
+\item{plot_title}{A character string containing the title for the resulting
+plot.}
 }
 \value{
 A ggplot containing the calibration plot
 }
 \description{
-Generate a single calibration plot with error bars showing 95 percent confidence intervals
+This code builds off of code written by Darren Dahly, PhD in this blog post:
+\url{https://darrendahly.github.io/post/homr/}.
 }
 \examples{
 data(single_model_dataset)
