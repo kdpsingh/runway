@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generate a single calibration plot with error bars showing 95 percent confidence intervals — cal_plot • runway</title>
+<title>Generate a single calibration plot with error bars showing 95 percent
+confidence intervals — cal_plot • runway</title>
 
 
 <!-- jquery -->
@@ -39,8 +40,10 @@
 
 
 
-<meta property="og:title" content="Generate a single calibration plot with error bars showing 95 percent confidence intervals — cal_plot" />
-<meta property="og:description" content="Generate a single calibration plot with error bars showing 95 percent confidence intervals" />
+<meta property="og:title" content="Generate a single calibration plot with error bars showing 95 percent
+confidence intervals — cal_plot" />
+<meta property="og:description" content="This code builds off of code written by Darren Dahly, PhD in this blog post:
+https://darrendahly.github.io/post/homr/." />
 
 
 
@@ -108,13 +111,15 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generate a single calibration plot with error bars showing 95 percent confidence intervals</h1>
+    <h1>Generate a single calibration plot with error bars showing 95 percent
+confidence intervals</h1>
     <small class="dont-index">Source: <a href='https://github.com/ML4LHS/runway/blob/master/R/cal_plots.R'><code>R/cal_plots.R</code></a></small>
     <div class="hidden name"><code>cal_plot.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Generate a single calibration plot with error bars showing 95 percent confidence intervals</p>
+    <p>This code builds off of code written by Darren Dahly, PhD in this blog post:
+<a href='https://darrendahly.github.io/post/homr/'>https://darrendahly.github.io/post/homr/</a>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>cal_plot</span><span class='op'>(</span>
@@ -136,27 +141,30 @@
     </tr>
     <tr>
       <th>outcome</th>
-      <td><p>A character string containing the name of the column containing
-the outcomes (expressed as 0/1s).</p></td>
+      <td><p>A character string containing the name of the column
+containing the outcomes (expressed as 0/1s).</p></td>
     </tr>
     <tr>
       <th>prediction</th>
-      <td><p>A character string containing the name of the column containing
-the predictions.</p></td>
+      <td><p>A character string containing the name of the column
+containing the predictions.</p></td>
     </tr>
     <tr>
       <th>n_bins</th>
-      <td><p>Number of bins. Defaults to 10. Set to 0 to hide binned calibration.</p></td>
+      <td><p>Number of bins. Defaults to 10. Set to 0 to hide binned
+calibration.</p></td>
     </tr>
     <tr>
       <th>show_loess</th>
-      <td><p>Whether to show loess smoothed calibration estimates. Defaults to FALSE.
-For <code>cal_plot()</code>, you can display both a binned calibration plot and a loess curve. In
-contrast, for <code><a href='cal_plot_multi.html'>cal_plot_multi()</a></code>, these options are mutually exclusive.</p></td>
+      <td><p>Whether to show loess smoothed calibration estimates.
+Defaults to FALSE. For <code>cal_plot()</code>, you can display both a binned
+calibration plot and a loess curve. In contrast, for
+<code><a href='cal_plot_multi.html'>cal_plot_multi()</a></code>, these options are mutually exclusive.</p></td>
     </tr>
     <tr>
       <th>plot_title</th>
-      <td><p>A character string containing the title for the resulting plot.</p></td>
+      <td><p>A character string containing the title for the resulting
+plot.</p></td>
     </tr>
     </table>
 
