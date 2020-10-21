@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generate a threshold-performance plot for multiple models with colored/shaded 95 percent confidence intervals — threshperf_plot_multi • runway</title>
+<title>Generate a threshold-performance plot for multiple models with colored/shaded
+95 percent confidence intervals — threshperf_plot_multi • runway</title>
 
 
 <!-- jquery -->
@@ -39,8 +40,10 @@
 
 
 
-<meta property="og:title" content="Generate a threshold-performance plot for multiple models with colored/shaded 95 percent confidence intervals — threshperf_plot_multi" />
-<meta property="og:description" content="Generate a threshold-performance plot for multiple models with colored/shaded 95 percent confidence intervals" />
+<meta property="og:title" content="Generate a threshold-performance plot for multiple models with colored/shaded
+95 percent confidence intervals — threshperf_plot_multi" />
+<meta property="og:description" content="Generate a threshold-performance plot for multiple models with colored/shaded
+95 percent confidence intervals" />
 
 
 
@@ -108,16 +111,32 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generate a threshold-performance plot for multiple models with colored/shaded 95 percent confidence intervals</h1>
+    <h1>Generate a threshold-performance plot for multiple models with colored/shaded
+95 percent confidence intervals</h1>
     <small class="dont-index">Source: <a href='https://github.com/ML4LHS/runway/blob/master/R/threshperf_plots.R'><code>R/threshperf_plots.R</code></a></small>
     <div class="hidden name"><code>threshperf_plot_multi.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Generate a threshold-performance plot for multiple models with colored/shaded 95 percent confidence intervals</p>
+    <p>Generate a threshold-performance plot for multiple models with colored/shaded
+95 percent confidence intervals</p>
     </div>
 
-    <pre class="usage"><span class='fu'>threshperf_plot_multi</span><span class='op'>(</span><span class='va'>df</span>, <span class='va'>outcome</span>, <span class='va'>prediction</span>, <span class='va'>model</span>, plot_title <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>threshperf_plot_multi</span><span class='op'>(</span>
+  <span class='va'>df</span>,
+  <span class='va'>outcome</span>,
+  <span class='va'>prediction</span>,
+  <span class='va'>model</span>,
+  plot_title <span class='op'>=</span> <span class='st'>""</span>,
+  xmin <span class='op'>=</span> <span class='fl'>0</span>,
+  xmax <span class='op'>=</span> <span class='fl'>1</span>,
+  pre_tp_geoms <span class='op'>=</span> <span class='cn'>NULL</span>,
+  pre_dist_geoms <span class='op'>=</span> <span class='cn'>NULL</span>,
+  post_tp_geoms <span class='op'>=</span> <span class='cn'>NULL</span>,
+  post_dist_geoms <span class='op'>=</span> <span class='cn'>NULL</span>,
+  heights <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>1</span><span class='op'>)</span>,
+  widths <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>1</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -128,13 +147,13 @@
     </tr>
     <tr>
       <th>outcome</th>
-      <td><p>A character string containing the name of the column containing
-the outcomes (expressed as 0/1s).</p></td>
+      <td><p>A character string containing the name of the column
+containing the outcomes (expressed as 0/1s).</p></td>
     </tr>
     <tr>
       <th>prediction</th>
-      <td><p>A character string containing the name of the column containing
-the predictions.</p></td>
+      <td><p>A character string containing the name of the column
+containing the predictions.</p></td>
     </tr>
     <tr>
       <th>model</th>
@@ -143,15 +162,54 @@ the model names</p></td>
     </tr>
     <tr>
       <th>plot_title</th>
-      <td><p>A character string containing the title for the resulting plot.</p></td>
+      <td><p>A character string containing the title for the resulting
+plot.</p></td>
+    </tr>
+    <tr>
+      <th>xmin</th>
+      <td><p>The minimum possible prediction. Defaults to 0.</p></td>
+    </tr>
+    <tr>
+      <th>xmax</th>
+      <td><p>The maximum possible prediction. Defaults to 1.</p></td>
+    </tr>
+    <tr>
+      <th>pre_tp_geoms</th>
+      <td><p>A ggplot geom_* (or a list of geoms) that should be drawn
+on the threshold-performance plot prior to rendering it.</p></td>
+    </tr>
+    <tr>
+      <th>pre_dist_geoms</th>
+      <td><p>A ggplot geom_* (or a list of geoms) that should be
+drawn on the distribution plot prior to rendering it.</p></td>
+    </tr>
+    <tr>
+      <th>post_tp_geoms</th>
+      <td><p>A ggplot geom_* (or a list of geoms) that should be
+drawn on the threshold-performance plot after rendering it.</p></td>
+    </tr>
+    <tr>
+      <th>post_dist_geoms</th>
+      <td><p>A ggplot geom_* (or a list of geoms) that should be
+drawn on the distribution plot after rendering it.</p></td>
+    </tr>
+    <tr>
+      <th>heights</th>
+      <td><p>A numeric vector of length 2 with ratio of heights of plots.
+Defaults to c(10, 1).</p></td>
+    </tr>
+    <tr>
+      <th>widths</th>
+      <td><p>A numeric vector of length 3 with ratio of widths of plots.
+The first and third elements refer to padding. Defaults to c(1, 2, 1).</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A ggplot containing the threshold-performance plot. The 95 percent
-confidence intervals are estimated using Wilson's interval from the <code>Hmisc</code>
-<code><a href='https://rdrr.io/pkg/Hmisc/man/binconf.html'>binconf</a></code> function.</p>
+  confidence intervals are estimated using Wilson's interval from the
+  <code>Hmisc</code> <code><a href='https://rdrr.io/pkg/Hmisc/man/binconf.html'>binconf</a></code> function.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>multi_model_dataset</span><span class='op'>)</span>
