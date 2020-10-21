@@ -4,26 +4,64 @@
 \alias{threshperf_plot}
 \title{Generate a threshold-performance plot for a single model}
 \usage{
-threshperf_plot(df, outcome, prediction, show_denom = TRUE, plot_title = "")
+threshperf_plot(
+  df,
+  outcome,
+  prediction,
+  show_denom = TRUE,
+  plot_title = "",
+  xmin = 0,
+  xmax = 1,
+  pre_tp_geoms = NULL,
+  pre_dist_geoms = NULL,
+  post_tp_geoms = NULL,
+  post_dist_geoms = NULL,
+  heights = c(10, 1),
+  widths = c(1, 2, 1)
+)
 }
 \arguments{
 \item{df}{The df as a data.frame.}
 
-\item{outcome}{A character string containing the name of the column containing
-the outcomes (expressed as 0/1s).}
+\item{outcome}{A character string containing the name of the column
+containing the outcomes (expressed as 0/1s).}
 
-\item{prediction}{A character string containing the name of the column containing
-the predictions.}
+\item{prediction}{A character string containing the name of the column
+containing the predictions.}
 
-\item{show_denom}{Show the denominator (as a fraction of the maximum positives/negatives)
-for the positive predictive value (PPV) and negative predictive value (NPV).}
+\item{show_denom}{Show the denominator (as a fraction of the maximum
+positives/negatives) for the positive predictive value (PPV) and negative
+predictive value (NPV).}
 
-\item{plot_title}{A character string containing the title for the resulting plot.}
+\item{plot_title}{A character string containing the title for the resulting
+plot.}
+
+\item{xmin}{The minimum possible prediction. Defaults to 0.}
+
+\item{xmax}{The maximum possible prediction. Defaults to 1.}
+
+\item{pre_tp_geoms}{A ggplot geom_* (or a list of geoms) that should be drawn
+on the threshold-performance plot prior to rendering it.}
+
+\item{pre_dist_geoms}{A ggplot geom_* (or a list of geoms) that should be
+drawn on the distribution plot prior to rendering it.}
+
+\item{post_tp_geoms}{A ggplot geom_* (or a list of geoms) that should be
+drawn on the threshold-performance plot after rendering it.}
+
+\item{post_dist_geoms}{A ggplot geom_* (or a list of geoms) that should be
+drawn on the distribution plot after rendering it.}
+
+\item{heights}{A numeric vector of length 2 with ratio of heights of plots.
+Defaults to c(10, 1).}
+
+\item{widths}{A numeric vector of length 3 with ratio of widths of plots.
+The first and third elements refer to padding. Defaults to c(1, 2, 1).}
 }
 \value{
 A ggplot containing the threshold-performance plot. The 95 percent
-confidence intervals are estimated using Wilson's interval from the \code{Hmisc}
-\code{\link[Hmisc]{binconf}} function.
+  confidence intervals are estimated using Wilson's interval from the
+  \code{Hmisc} \code{\link[Hmisc]{binconf}} function.
 }
 \description{
 Generate a threshold-performance plot for a single model

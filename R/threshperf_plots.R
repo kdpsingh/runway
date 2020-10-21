@@ -48,7 +48,7 @@ threshperf <- function(df, outcome, prediction) {
   df_metrics <- df %>%
     two_class(truth = get(outcome), estimate = alt_pred)
 
-  df_metrics <-
+  suppressWarnings({df_metrics <-
     df_metrics %>%
     dplyr::group_by(.threshold) %>%
     dplyr::mutate(denom =
@@ -60,7 +60,7 @@ threshperf <- function(df, outcome, prediction) {
              )) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(numer = round(.estimate * denom)) %>%
-    na.omit()
+    na.omit()})
 
   df_ci = Hmisc::binconf(x = df_metrics$numer, n = df_metrics$denom,
                          alpha = 0.05, method = 'wilson') %>%
@@ -76,21 +76,45 @@ threshperf <- function(df, outcome, prediction) {
 #' Generate a threshold-performance plot for a single model
 #'
 #' @param df The df as a data.frame.
-#' @param outcome A character string containing the name of the column containing
-#' the outcomes (expressed as 0/1s).
-#' @param prediction A character string containing the name of the column containing
-#' the predictions.
-#' @param show_denom Show the denominator (as a fraction of the maximum positives/negatives)
-#' for the positive predictive value (PPV) and negative predictive value (NPV).
-#' @param plot_title A character string containing the title for the resulting plot.
+#' @param outcome A character string containing the name of the column
+#'   containing the outcomes (expressed as 0/1s).
+#' @param prediction A character string containing the name of the column
+#'   containing the predictions.
+#' @param show_denom Show the denominator (as a fraction of the maximum
+#'   positives/negatives) for the positive predictive value (PPV) and negative
+#'   predictive value (NPV).
+#' @param plot_title A character string containing the title for the resulting
+#'   plot.
+#' @param xmin The minimum possible prediction. Defaults to 0.
+#' @param xmax The maximum possible prediction. Defaults to 1.
+#' @param pre_tp_geoms A ggplot geom_* (or a list of geoms) that should be drawn
+#'   on the threshold-performance plot prior to rendering it.
+#' @param pre_dist_geoms A ggplot geom_* (or a list of geoms) that should be
+#'   drawn on the distribution plot prior to rendering it.
+#' @param post_tp_geoms A ggplot geom_* (or a list of geoms) that should be
+#'   drawn on the threshold-performance plot after rendering it.
+#' @param post_dist_geoms A ggplot geom_* (or a list of geoms) that should be
+#'   drawn on the distribution plot after rendering it.
+#' @param heights A numeric vector of length 2 with ratio of heights of plots.
+#'   Defaults to c(10, 1).
+#' @param widths A numeric vector of length 3 with ratio of widths of plots.
+#'   The first and third elements refer to padding. Defaults to c(1, 2, 1).
 #' @return A ggplot containing the threshold-performance plot. The 95 percent
-#' confidence intervals are estimated using Wilson's interval from the \code{Hmisc}
-#' \code{\link[Hmisc]{binconf}} function.
+#'   confidence intervals are estimated using Wilson's interval from the
+#'   \code{Hmisc} \code{\link[Hmisc]{binconf}} function.
 #' @examples
 #' data(single_model_dataset)
 #' threshperf_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions')
 #' @export
-threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_title = '') {
+threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_title = '',
+                            xmin = 0,
+                            xmax = 1,
+                            pre_tp_geoms = NULL,
+                            pre_dist_geoms = NULL,
+                            post_tp_geoms = NULL,
+                            post_dist_geoms = NULL,
+                            heights = c(10,1),
+                            widths = c(1,2,1)) {
   tp_data = threshperf(df, outcome, prediction)
 
     tp_data =
@@ -115,10 +139,16 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
                                  ymin = ll,
                                  ymax = ul))
 
+  if (!is.null(pre_tp_geoms)) {
+    tp_plot =
+      tp_plot +
+      pre_tp_geoms
+  }
+
   if (show_denom) {
     tp_plot =
       tp_plot +
-      ggplot2::geom_ribbon(ggplot2::aes(ymin = 0, ymax = denom_frac*100), fill = 'grey90')
+      ggplot2::geom_ribbon(ggplot2::aes(ymin = 0, ymax = denom_frac*100), fill = 'grey', alpha = 1/3)
   }
 
   tp_plot = tp_plot +
@@ -126,40 +156,86 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
     ggplot2::geom_line(size = 1) +
     ggplot2::facet_grid(.metric~.) +
     ggplot2::theme_bw() +
+    ggplot2::coord_cartesian(xlim=c(xmin,xmax)) +
     ggplot2::labs(x = 'Threshold', y = 'Performance (%)') +
     ggplot2::ggtitle(plot_title)
 
+  if (!is.null(post_tp_geoms)) {
+    tp_plot =
+      tp_plot +
+      post_tp_geoms
+  }
+
   threshold_dist_plot =
     df %>%
-    ggplot2::ggplot(ggplot2::aes(x=get(prediction))) +
+    ggplot2::ggplot(ggplot2::aes(x=get(prediction)))
+
+  if (!is.null(pre_dist_geoms)) {
+    threshold_dist_plot =
+      threshold_dist_plot +
+      pre_dist_geoms
+  }
+
+  threshold_dist_plot =
+    threshold_dist_plot +
     ggplot2::geom_histogram(fill = 'black', bins = 100) +
-    ggplot2::coord_cartesian(xlim=c(0,1)) +
+    ggplot2::coord_cartesian(xlim=c(xmin,xmax)) +
     ggplot2::theme_void()
 
+  if (!is.null(post_dist_geoms)) {
+    threshold_dist_plot =
+      threshold_dist_plot +
+      post_dist_geoms
+  }
+
   patchwork::plot_spacer() +
-    (tp_plot / threshold_dist_plot + patchwork::plot_layout(heights = c(10,1))) +
+    (tp_plot / threshold_dist_plot + patchwork::plot_layout(heights = heights)) +
     patchwork::plot_spacer() +
-   patchwork::plot_layout(widths = c(1,2,1))
+   patchwork::plot_layout(widths = widths)
 }
 
-#' Generate a threshold-performance plot for multiple models with colored/shaded 95 percent confidence intervals
+#' Generate a threshold-performance plot for multiple models with colored/shaded
+#' 95 percent confidence intervals
 #'
 #' @param df The df as a data.frame.
-#' @param outcome A character string containing the name of the column containing
-#' the outcomes (expressed as 0/1s).
-#' @param prediction A character string containing the name of the column containing
-#' the predictions.
+#' @param outcome A character string containing the name of the column
+#'   containing the outcomes (expressed as 0/1s).
+#' @param prediction A character string containing the name of the column
+#'   containing the predictions.
 #' @param model A character string containing the name of the column containing
-#' the model names
-#' @param plot_title A character string containing the title for the resulting plot.
+#'   the model names
+#' @param plot_title A character string containing the title for the resulting
+#'   plot.
+#' @param xmin The minimum possible prediction. Defaults to 0.
+#' @param xmax The maximum possible prediction. Defaults to 1.
+#' @param pre_tp_geoms A ggplot geom_* (or a list of geoms) that should be drawn
+#'   on the threshold-performance plot prior to rendering it.
+#' @param pre_dist_geoms A ggplot geom_* (or a list of geoms) that should be
+#'   drawn on the distribution plot prior to rendering it.
+#' @param post_tp_geoms A ggplot geom_* (or a list of geoms) that should be
+#'   drawn on the threshold-performance plot after rendering it.
+#' @param post_dist_geoms A ggplot geom_* (or a list of geoms) that should be
+#'   drawn on the distribution plot after rendering it.
+#' @param heights A numeric vector of length 2 with ratio of heights of plots.
+#'   Defaults to c(10, 1).
+#' @param widths A numeric vector of length 3 with ratio of widths of plots.
+#'   The first and third elements refer to padding. Defaults to c(1, 2, 1).
 #' @return A ggplot containing the threshold-performance plot. The 95 percent
-#' confidence intervals are estimated using Wilson's interval from the \code{Hmisc}
-#' \code{\link[Hmisc]{binconf}} function.
+#'   confidence intervals are estimated using Wilson's interval from the
+#'   \code{Hmisc} \code{\link[Hmisc]{binconf}} function.
 #' @examples
 #' data(multi_model_dataset)
 #' threshperf_plot_multi(multi_model_dataset, outcome = 'outcomes', prediction = 'predictions', model = 'model_name')
 #' @export
-threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '') {
+threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '',
+                                  xmin = 0,
+                                  xmax = 1,
+                                  pre_tp_geoms = NULL,
+                                  pre_dist_geoms = NULL,
+                                  post_tp_geoms = NULL,
+                                  post_dist_geoms = NULL,
+                                  heights = c(10,1),
+                                  widths = c(1,2,1)) {
 
   how_many_models = df[[model]] %>% unique() %>% length()
 
@@ -188,19 +264,44 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
                                  ymin = ll,
                                  ymax = ul,
                                  color = get(model),
-                                 fill = get(model))) +
+                                 fill = get(model)))
+
+
+  if (!is.null(pre_tp_geoms)) {
+    tp_plot =
+      tp_plot +
+      pre_tp_geoms
+  }
+
+  tp_plot = tp_plot +
     ggplot2::geom_ribbon(alpha = 1/how_many_models) +
     ggplot2::geom_line(size = 1) +
     ggplot2::facet_grid(.metric~.) +
     ggplot2::theme_bw() +
+    ggplot2::coord_cartesian(xlim=c(xmin,xmax)) +
     ggplot2::labs(x = 'Threshold', y = 'Performance (%)') +
     ggplot2::scale_color_brewer(name = 'Models', palette = 'Set1') +
     ggplot2::scale_fill_brewer(name = 'Models', palette = 'Set1') +
     ggplot2::ggtitle(plot_title)
 
-  threshold_dist_plot <- ggplot2::ggplot(df, ggplot2::aes(x = get(prediction))) +
+  if (!is.null(post_tp_geoms)) {
+    tp_plot =
+      tp_plot +
+      post_tp_geoms
+  }
+
+  threshold_dist_plot <- ggplot2::ggplot(df, ggplot2::aes(x = get(prediction)))
+
+  if (!is.null(pre_dist_geoms)) {
+    threshold_dist_plot =
+      threshold_dist_plot +
+      pre_dist_geoms
+  }
+
+  threshold_dist_plot =
+    threshold_dist_plot +
     ggplot2::geom_density(alpha = 1/how_many_models, ggplot2::aes(fill = get(model), color = get(model))) +
-    ggplot2::scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
+    ggplot2::scale_x_continuous(limits = c(xmin, xmax), breaks = seq(xmin, xmax, by = (xmax-xmin)/10)) +
     # scale_color_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
     # scale_fill_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
     ggplot2::xlab("") +
@@ -213,8 +314,15 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
     ggeasy::easy_remove_legend(fill, color) +
     ggplot2::theme_void()
 
+  if (!is.null(post_dist_geoms)) {
+    threshold_dist_plot =
+      threshold_dist_plot +
+      post_dist_geoms
+  }
+
+
   patchwork::plot_spacer() +
-    (tp_plot / threshold_dist_plot + patchwork::plot_layout(heights = c(10,1))) +
+    (tp_plot / threshold_dist_plot + patchwork::plot_layout(heights = heights)) +
     patchwork::plot_spacer() +
-    patchwork::plot_layout(widths = c(1,2,1))
+    patchwork::plot_layout(widths = widths)
 }
