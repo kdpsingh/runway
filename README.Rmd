@@ -160,3 +160,4 @@ cal_plot_multi(multi_model_dataset,
          model = 'model_name',
          n_bins = 0,
          show_loess = TRUE)
+```
