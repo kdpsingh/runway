@@ -46,7 +46,7 @@ threshperf <- function(df, outcome, prediction) {
   df <- df %>% dplyr::group_by(.threshold)
 
   df_metrics <- df %>%
-    two_class(truth = get(outcome), estimate = alt_pred)
+    two_class(truth = !!parse_expr(outcome), estimate = alt_pred)
 
   suppressWarnings({df_metrics <-
     df_metrics %>%
@@ -168,7 +168,7 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
 
   threshold_dist_plot =
     df %>%
-    ggplot2::ggplot(ggplot2::aes(x=get(prediction)))
+    ggplot2::ggplot(ggplot2::aes(x=!!parse_expr(prediction)))
 
   if (!is.null(pre_dist_geoms)) {
     threshold_dist_plot =
@@ -263,8 +263,8 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
                                  y = .estimate,
                                  ymin = ll,
                                  ymax = ul,
-                                 color = get(model),
-                                 fill = get(model)))
+                                 color = !!parse_expr(model),
+                                 fill = !!parse_expr(model)))
 
 
   if (!is.null(pre_tp_geoms)) {
@@ -290,7 +290,7 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
       post_tp_geoms
   }
 
-  threshold_dist_plot <- ggplot2::ggplot(df, ggplot2::aes(x = get(prediction)))
+  threshold_dist_plot <- ggplot2::ggplot(df, ggplot2::aes(x = !!parse_expr(prediction)))
 
   if (!is.null(pre_dist_geoms)) {
     threshold_dist_plot =
@@ -300,7 +300,7 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
 
   threshold_dist_plot =
     threshold_dist_plot +
-    ggplot2::geom_density(alpha = 1/how_many_models, ggplot2::aes(fill = get(model), color = get(model))) +
+    ggplot2::geom_density(alpha = 1/how_many_models, ggplot2::aes(fill = !!parse_expr(model), color = !!parse_expr(model))) +
     ggplot2::scale_x_continuous(limits = c(xmin, xmax), breaks = seq(xmin, xmax, by = (xmax-xmin)/10)) +
     # scale_color_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
     # scale_fill_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
