@@ -25,12 +25,12 @@
 cal_plot <- function(df, outcome, prediction, n_bins = 10, show_loess = FALSE, plot_title = '', ...){
 
   # The calibration plot
-  g1 <- dplyr::mutate(df, bin = dplyr::ntile(get(prediction), n_bins)) %>%
+  g1 <- dplyr::mutate(df, bin = dplyr::ntile(!!rlang::parse_expr(prediction), n_bins)) %>%
     # Bin prediction into n_bins
     dplyr::group_by(bin) %>%
     dplyr::mutate(n = dplyr::n(), # Get ests and CIs
-           bin_pred = mean(get(prediction), na.rm = TRUE),
-           bin_prob = mean(as.numeric(as.character(get(outcome))), na.rm = TRUE),
+           bin_pred = mean(!!rlang::parse_expr(prediction), na.rm = TRUE),
+           bin_prob = mean(as.numeric(as.character(!!rlang::parse_expr(outcome))), na.rm = TRUE),
            se = sqrt((bin_prob * (1 - bin_prob)) / n),
            ul = bin_prob + 1.96 * se,
            ll = bin_prob - 1.96 * se) %>%
@@ -54,7 +54,7 @@ cal_plot <- function(df, outcome, prediction, n_bins = 10, show_loess = FALSE, p
 
   if (show_loess) {
     g1 = g1 +
-    ggplot2::geom_smooth(ggplot2::aes(x = get(prediction), y = as.numeric(get(outcome))),
+    ggplot2::geom_smooth(ggplot2::aes(x = !!rlang::parse_expr(prediction), y = as.numeric(!!rlang::parse_expr(outcome))),
                color = "black", se = TRUE, method = "loess")
     # loess fit through estimates
   }
@@ -67,7 +67,7 @@ cal_plot <- function(df, outcome, prediction, n_bins = 10, show_loess = FALSE, p
     ggplot2::ggtitle(plot_title)
 
   # The distribution plot
-  g2 <- ggplot2::ggplot(df, ggplot2::aes(x = get(prediction))) +
+  g2 <- ggplot2::ggplot(df, ggplot2::aes(x = !!rlang::parse_expr(prediction))) +
     ggplot2::geom_histogram(fill = "black", bins = 100) +
     ggplot2::scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
     ggplot2::xlab("") +
@@ -120,13 +120,13 @@ cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, show_loe
 
   # The calibration plot
   g1 <- df %>%
-    dplyr::group_by(get(model)) %>%
-    dplyr::mutate(bin = dplyr::ntile(get(prediction), n_bins)) %>%
+    dplyr::group_by(!!rlang::parse_expr(model)) %>%
+    dplyr::mutate(bin = dplyr::ntile(!!rlang::parse_expr(prediction), n_bins)) %>%
     # Bin prediction
-    dplyr::group_by(get(model), bin) %>%
+    dplyr::group_by(!!rlang::parse_expr(model), bin) %>%
     dplyr::mutate(n = dplyr::n(), # Get ests and CIs
-           bin_pred = mean(get(prediction), na.rm = TRUE),
-           bin_prob = mean(as.numeric(as.character(get(outcome))), na.rm = TRUE),
+           bin_pred = mean(!!rlang::parse_expr(prediction), na.rm = TRUE),
+           bin_prob = mean(as.numeric(as.character(!!rlang::parse_expr(outcome))), na.rm = TRUE),
            se = sqrt((bin_prob * (1 - bin_prob)) / n),
            ul = bin_prob + 1.96 * se,
            ll = bin_prob - 1.96 * se) %>%
@@ -150,8 +150,8 @@ cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, show_loe
     if (show_loess == FALSE && n_bins > 0) {
       g1 = g1 + ggplot2::aes(x = bin_pred,
                    y = bin_prob,
-                   color = get(model),
-                   fill = get(model)) +
+                   color = !!rlang::parse_expr(model),
+                   fill = !!rlang::parse_expr(model)) +
         ggplot2::geom_ribbon(ggplot2::aes(ymin = ll,
                                           ymax = ul,),
                              alpha = 1/how_many_models) +
@@ -160,8 +160,8 @@ cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, show_loe
     }
     else if (show_loess == TRUE && n_bins == 0) {
       g1 = g1 +
-        ggplot2::stat_smooth(ggplot2::aes(x = get(prediction), y = as.numeric(get(outcome)),
-                                          color = get(model), fill = get(model)),
+        ggplot2::stat_smooth(ggplot2::aes(x = !!rlang::parse_expr(prediction), y = as.numeric(!!rlang::parse_expr(outcome)),
+                                          color = !!rlang::parse_expr(model), fill = !!rlang::parse_expr(model)),
                             #              alpha = 1/how_many_models), # currently ignored by geom_smooth
                              se = TRUE, method = "loess")
       # loess fit through estimates
@@ -178,8 +178,8 @@ cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, show_loe
 
 
   # The distribution plot
-  g2 <- ggplot2::ggplot(df, ggplot2::aes(x = get(prediction))) +
-    ggplot2::geom_density(alpha = 1/how_many_models, ggplot2::aes(fill = get(model), color = get(model))) +
+  g2 <- ggplot2::ggplot(df, ggplot2::aes(x = !!rlang::parse_expr(prediction))) +
+    ggplot2::geom_density(alpha = 1/how_many_models, ggplot2::aes(fill = !!rlang::parse_expr(model), color = !!rlang::parse_expr(model))) +
     ggplot2::scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
     ggplot2::coord_fixed() +
     # scale_color_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
