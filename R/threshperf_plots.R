@@ -10,15 +10,19 @@
 #' the outcomes (expressed as 0/1s).
 #' @param prediction A character string containing the name of the column containing
 #' the predictions.
+#' @param positive
+#' @param thresholds
 #' @return A data.frame containing the columns \code{.threshold}, \code{.metric},
 #' \code{.estimator}, and \code{.estimate}
 #' @examples
 #' data(single_model_dataset)
 #' threshperf(single_model_dataset, outcome = 'outcomes', prediction = 'predictions')
 #' @export
-threshperf <- function(df, outcome, prediction) {
+threshperf <- function(df, outcome, prediction, positive = 'has_sepsis', thresholds = NULL) {
 
-  thresholds = unique(c(0,sort(unique(df[[prediction]])), 1))
+  if(is.null(thresholds)){
+    thresholds = unique(c(0,sort(unique(df[[prediction]])), 1))
+  }
 
   df <- dplyr::select(df, dplyr::all_of(c(outcome, prediction)))
 
@@ -41,23 +45,23 @@ threshperf <- function(df, outcome, prediction) {
 
   df <-
     df %>%
-    dplyr::mutate(alt_pred = recode_data(df[[outcome]], df[[prediction]], .threshold))
+    dplyr::mutate(alt_pred = recode_data(!!rlang::parse_expr(outcome), !!rlang::parse_expr(prediction), .threshold))
 
   df <- df %>% dplyr::group_by(.threshold)
 
   df_metrics <- df %>%
-    two_class(truth = !!parse_expr(outcome), estimate = alt_pred)
+    two_class(truth = !!rlang::parse_expr(outcome), estimate = alt_pred)
 
   suppressWarnings({df_metrics <-
     df_metrics %>%
     dplyr::group_by(.threshold) %>%
     dplyr::mutate(denom =
-             dplyr::case_when(
-               .metric == 'sens' ~ sum(df_orig[[outcome]] == 1),
-               .metric == 'spec' ~ sum(df_orig[[outcome]] == 0),
-               .metric == 'ppv' ~ sum(df_orig[[prediction]] >= .threshold),
-               .metric == 'npv' ~ sum(df_orig[[prediction]] < .threshold),
-             )) %>%
+                    dplyr::case_when(
+                      .metric == 'sens' ~ sum(df_orig[[outcome]] == 1),
+                      .metric == 'spec' ~ sum(df_orig[[outcome]] == 0),
+                      .metric == 'ppv' ~ sum(df_orig[[prediction]] >= .threshold),
+                      .metric == 'npv' ~ sum(df_orig[[prediction]] < .threshold),
+                    )) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(numer = round(.estimate * denom)) %>%
     na.omit()})
@@ -68,7 +72,7 @@ threshperf <- function(df, outcome, prediction) {
     dplyr::rename(ll = Lower, ul = Upper) %>%
     dplyr::mutate_at(dplyr::vars(ul, ll), . %>% scales::oob_squish(range = c(0,1)))
 
-    df_metrics = dplyr::bind_cols(df_metrics, df_ci)
+  df_metrics = dplyr::bind_cols(df_metrics, df_ci)
 
   data.frame(df_metrics, check.names = FALSE, stringsAsFactors = FALSE)
 }
@@ -99,6 +103,8 @@ threshperf <- function(df, outcome, prediction) {
 #'   Defaults to c(10, 1).
 #' @param widths A numeric vector of length 3 with ratio of widths of plots.
 #'   The first and third elements refer to padding. Defaults to c(1, 2, 1).
+#' @param positive
+#' @param thresholds
 #' @return A ggplot containing the threshold-performance plot. The 95 percent
 #'   confidence intervals are estimated using Wilson's interval from the
 #'   \code{Hmisc} \code{\link[Hmisc]{binconf}} function.
@@ -114,24 +120,23 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
                             post_tp_geoms = NULL,
                             post_dist_geoms = NULL,
                             heights = c(10,1),
-                            widths = c(1,2,1)) {
-  tp_data = threshperf(df, outcome, prediction)
-
-    tp_data =
+                            widths = c(1,2,1),positive = 'has_sepsis', thresholds = NULL) {
+  tp_data = threshperf(df, outcome, prediction, thresholds)
+  tp_data =
     tp_data %>%
     dplyr::group_by(.metric) %>%
     dplyr::mutate(denom_frac =
                     dplyr::if_else(.metric %in% c('ppv', 'npv'),
-                            denom/max(denom), NA_real_, NA_real_)) %>%
+                                   denom/max(denom), NA_real_, NA_real_)) %>%
     dplyr::ungroup()
 
   tp_plot =
     tp_data %>%
     dplyr::mutate(.metric = dplyr::case_when(
-                               .metric == 'npv' ~ 'NPV',
-                               .metric == 'ppv' ~ 'PPV',
-                               .metric == 'spec' ~ 'Specificity',
-                               .metric == 'sens' ~ 'Sensitivity')) %>%
+      .metric == 'npv' ~ 'NPV',
+      .metric == 'ppv' ~ 'PPV',
+      .metric == 'spec' ~ 'Specificity',
+      .metric == 'sens' ~ 'Sensitivity')) %>%
     dplyr::mutate(.metric = factor(.metric, levels = c('Sensitivity', 'Specificity', 'PPV', 'NPV'))) %>%
     dplyr::mutate_at(dplyr::vars(.estimate, ll, ul), . %>% {. * 100}) %>%
     ggplot2::ggplot(ggplot2::aes(x = .threshold,
@@ -168,7 +173,7 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
 
   threshold_dist_plot =
     df %>%
-    ggplot2::ggplot(ggplot2::aes(x=!!parse_expr(prediction)))
+    ggplot2::ggplot(ggplot2::aes(x=!!rlang::parse_expr(prediction)))
 
   if (!is.null(pre_dist_geoms)) {
     threshold_dist_plot =
@@ -191,7 +196,7 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
   patchwork::plot_spacer() +
     (tp_plot / threshold_dist_plot + patchwork::plot_layout(heights = heights)) +
     patchwork::plot_spacer() +
-   patchwork::plot_layout(widths = widths)
+    patchwork::plot_layout(widths = widths)
 }
 
 #' Generate a threshold-performance plot for multiple models with colored/shaded
@@ -220,6 +225,7 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
 #'   Defaults to c(10, 1).
 #' @param widths A numeric vector of length 3 with ratio of widths of plots.
 #'   The first and third elements refer to padding. Defaults to c(1, 2, 1).
+#' @param thresholds
 #' @return A ggplot containing the threshold-performance plot. The 95 percent
 #'   confidence intervals are estimated using Wilson's interval from the
 #'   \code{Hmisc} \code{\link[Hmisc]{binconf}} function.
@@ -235,7 +241,7 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
                                   post_tp_geoms = NULL,
                                   post_dist_geoms = NULL,
                                   heights = c(10,1),
-                                  widths = c(1,2,1)) {
+                                  widths = c(1,2,1), thresholds = NULL) {
 
   how_many_models = df[[model]] %>% unique() %>% length()
 
@@ -244,7 +250,7 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
     tp_data_list[[model_name]] <-
       threshperf(df[df[[model]] == model_name,],
                  outcome,
-                 prediction)
+                 prediction, thresholds)
     tp_data_list[[model_name]][[model]] <- model_name
   }
 
@@ -263,8 +269,8 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
                                  y = .estimate,
                                  ymin = ll,
                                  ymax = ul,
-                                 color = !!parse_expr(model),
-                                 fill = !!parse_expr(model)))
+                                 color = !!rlang::parse_expr(model),
+                                 fill = !!rlang::parse_expr(model)))
 
 
   if (!is.null(pre_tp_geoms)) {
@@ -290,7 +296,7 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
       post_tp_geoms
   }
 
-  threshold_dist_plot <- ggplot2::ggplot(df, ggplot2::aes(x = !!parse_expr(prediction)))
+  threshold_dist_plot <- ggplot2::ggplot(df, ggplot2::aes(x = !!rlang::parse_expr(prediction)))
 
   if (!is.null(pre_dist_geoms)) {
     threshold_dist_plot =
@@ -300,7 +306,7 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
 
   threshold_dist_plot =
     threshold_dist_plot +
-    ggplot2::geom_density(alpha = 1/how_many_models, ggplot2::aes(fill = !!parse_expr(model), color = !!parse_expr(model))) +
+    ggplot2::geom_density(alpha = 1/how_many_models, ggplot2::aes(fill = !!rlang::parse_expr(model), color = !!rlang::parse_expr(model))) +
     ggplot2::scale_x_continuous(limits = c(xmin, xmax), breaks = seq(xmin, xmax, by = (xmax-xmin)/10)) +
     # scale_color_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
     # scale_fill_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
