@@ -3,6 +3,7 @@
 export("%>%")
 export(cal_plot)
 export(cal_plot_multi)
+export(roc_plot)
 export(threshperf)
 export(threshperf_plot)
 export(threshperf_plot_multi)
