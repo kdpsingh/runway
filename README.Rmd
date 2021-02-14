@@ -161,3 +161,21 @@ cal_plot_multi(multi_model_dataset,
          n_bins = 0,
          show_loess = TRUE)
 ```
+
+## ROC curve w/o CI ribbon
+
+```{r}
+roc_plot(single_model_dataset, 
+         outcome = 'outcomes', 
+         prediction = 'predictions')
+```
+
+## ROC curve w/CI
+
+```{r}
+roc_plot(single_model_dataset, 
+         outcome = 'outcomes', 
+         prediction = 'predictions', 
+         ci = TRUE)
+```
+
