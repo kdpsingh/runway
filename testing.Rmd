@@ -45,16 +45,28 @@ ribbon = ci_data %>%
   tidyr::unnest_wider(ci_ribbon) %>% 
   tidyr::unnest(cols = c(x, lower, upper))
 
-# ci = TRUE
-  # if(ci){
-g1 + ggplot2::geom_ribbon(data = ribbon,
+ci_data$roc[[1]]$ci
+
+ci_values = ci_data %>% 
+  dplyr::select(model_name, roc) %>% 
+  dplyr::mutate(ci = purrr::map(roc, ~ .$ci)) %>% 
+  dplyr::select(-roc)
+ci_values$ci %>% capture.output()
+#%>% 
+  # tidyr::unnest_wider(ci)
+
+ci_values = ci_data %>% 
+  dplyr::select(model_name, roc) %>% 
+  dplyr::mutate(ci = purrr::map(roc, ~ pROC::ci(.))) 
+ci_values$ci
+
+g2 = g1 + ggplot2::geom_ribbon(data = ribbon,
                           ggplot2::aes(fill = name, x = x, ymin = lower, ymax = upper), alpha = 0.15, inherit.aes = FALSE)+
   ggplot2::guides(colour = "legend")
-      # fill = "steelblue",
-      # alpha = 0.2
-      # ) #+ ggplot2::ggtitle(capture.output(roc_list$ci))
-  # } else g2 = g1 + ggplot2::ggtitle(plot_title)
-  g2
+
+ci.grob <-  gridExtra::tableGrob(ci_values$ci)#, gpar.coretext = gpar(col = "black", cex = 1))
+
+g2 | ci.grob
 
 ```
 
