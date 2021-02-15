@@ -1,0 +1,62 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+data("multi_model_dataset")
+multi_model_dataset
+```
+
+
+```{r}
+ci_data_list = function(obj){
+data.frame(x = as.numeric(rownames(obj)),
+                     lower = obj[, 1],
+                     upper = obj[, 3])
+}
+
+ci_data = multi_model_dataset %>% 
+  dplyr::group_by(model_name) %>% 
+  dplyr::group_nest() %>% 
+  dplyr::mutate(roc = purrr::map(data, ~ pROC::roc_(data = ., response = "outcomes", predictor = "predictions", ci = TRUE, plot=FALSE)),
+                roc = roc %>% setNames(model_name),
+                ci_spec = purrr::map(roc, ~ pROC::ci.se(., specificities = seq(0, 1, l = 25))), 
+                ci_ribbon = purrr::map(ci_spec, ~ ci_data_list(.)))
+```
+
+
+```{r}
+g1 = pROC::ggroc(ci_data$roc) +
+  ggplot2::theme_minimal() + 
+  ggplot2::geom_abline(
+    slope = 1,
+    intercept = 1,
+    linetype = "dashed",
+    alpha = 0.7,
+    color = "grey"
+  ) +
+  ggplot2::coord_equal()
+g1
+
+ribbon = ci_data %>% 
+  dplyr::select(model_name, ci_ribbon) %>% 
+  dplyr::rename(name = model_name) %>% 
+  tidyr::unnest_wider(ci_ribbon) %>% 
+  tidyr::unnest(cols = c(x, lower, upper))
+
+# ci = TRUE
+  # if(ci){
+g1 + ggplot2::geom_ribbon(data = ribbon,
+                          ggplot2::aes(fill = name, x = x, ymin = lower, ymax = upper), alpha = 0.15, inherit.aes = FALSE)+
+  ggplot2::guides(colour = "legend")
+      # fill = "steelblue",
+      # alpha = 0.2
+      # ) #+ ggplot2::ggtitle(capture.output(roc_list$ci))
+  # } else g2 = g1 + ggplot2::ggtitle(plot_title)
+  g2
+
+```
+
+
+
