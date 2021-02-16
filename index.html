@@ -224,6 +224,29 @@
          show_loess <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-13-1.png" width="100%"></p>
 </div>
+<div id="roc-curve-wci" class="section level2">
+<h2 class="hasAnchor">
+<a href="#roc-curve-wci" class="anchor"></a>ROC curve w/CI</h2>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/roc_plot.html">roc_plot</a></span><span class="op">(</span><span class="va">single_model_dataset</span>, 
+         outcome <span class="op">=</span> <span class="st">'outcomes'</span>, 
+         prediction <span class="op">=</span> <span class="st">'predictions'</span>,
+         ci <span class="op">=</span> <span class="cn">TRUE</span>, 
+         plot_title <span class="op">=</span> <span class="st">'Single ROC curve w/CI ribbon'</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-14-1.png" width="100%"></p>
+</div>
+<div id="multiple-roc-curves-wci-ribbons" class="section level2">
+<h2 class="hasAnchor">
+<a href="#multiple-roc-curves-wci-ribbons" class="anchor"></a>Multiple ROC curves w/CI ribbons</h2>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/roc_plot_multi.html">roc_plot_multi</a></span><span class="op">(</span><span class="va">multi_model_dataset</span>, 
+         outcome <span class="op">=</span> <span class="st">'outcomes'</span>, 
+         prediction <span class="op">=</span> <span class="st">'predictions'</span>, 
+         model <span class="op">=</span> <span class="st">'model_name'</span>,
+         ci <span class="op">=</span> <span class="cn">TRUE</span>,
+         plot_title <span class="op">=</span> <span class="st">'Multiple model ROC curves w/CI ribbons'</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-15-1.png" width="100%"></p>
+</div>
 </div>
   </div>
 
