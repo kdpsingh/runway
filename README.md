@@ -167,7 +167,7 @@ cal_plot_multi(multi_model_dataset,
 ## Calibration plot with loess curve (multiple models)
 
 Unlike single calibration plots, the choice of binned calibration and
-loess calibration are mutually exclusive. To show less curves, you must
+loess calibration are mutually exclusive. To show LOESS curves, you must
 set `show_loess` to `TRUE` *and* `n_bins` to `0`.
 
 ``` r
