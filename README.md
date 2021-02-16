@@ -201,3 +201,26 @@ roc_plot(single_model_dataset,
 ```
 
 <img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
+
+## Multiple ROC curves w/o CI
+
+``` r
+roc_plot_multi(multi_model_dataset, 
+         outcome = 'outcomes', 
+         prediction = 'predictions', 
+         model = 'model_name')
+```
+
+<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
+
+## Multiple ROC curves w/CI ribbons
+
+``` r
+roc_plot_multi(multi_model_dataset, 
+         outcome = 'outcomes', 
+         prediction = 'predictions', 
+         model = 'model_name', 
+         ci = TRUE)
+```
+
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
