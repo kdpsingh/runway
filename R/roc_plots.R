@@ -87,9 +87,10 @@ roc_plot_multi <- function(df, outcome, prediction, model, ci = FALSE, plot_titl
       color = "grey"
     ) +
     ggplot2::coord_equal() +
-    ggplot2::scale_color_brewer(name = 'name', palette = 'Set1') +
-    ggplot2::scale_fill_brewer(name = 'name', palette = 'Set1') +
-    ggplot2::ggtitle(plot_title)
+    ggplot2::scale_color_brewer(name = 'Models', palette = 'Set1') +
+    ggplot2::scale_fill_brewer(name = 'Models', palette = 'Set1') +
+    ggplot2::ggtitle(plot_title) +
+    ggplot2::guides(colour = "legend")
 
   # build CI intervals
   if(ci){
@@ -111,9 +112,8 @@ roc_plot_multi <- function(df, outcome, prediction, model, ci = FALSE, plot_titl
     g2 = g1 + ggplot2::geom_ribbon(data = ribbon,
                                    ggplot2::aes(fill = name, x = x, ymin = lower, ymax = upper),
                                    alpha = 0.15,
-                                   inherit.aes = FALSE)+
-      ggplot2::guides(colour = "legend")
-  } else g2 = g1 + ggplot2::guides(colour = "legend")
+                                   inherit.aes = FALSE)
+  } else g2 = g1
   g2
 }
 
