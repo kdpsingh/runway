@@ -4,7 +4,7 @@
 \alias{threshperf}
 \title{Calculates threshold-performance data}
 \usage{
-threshperf(df, outcome, prediction)
+threshperf(df, outcome, prediction, positive = "has_sepsis", thresholds = NULL)
 }
 \arguments{
 \item{df}{The df as a data.frame.}

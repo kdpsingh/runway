@@ -47,7 +47,7 @@ remotes::install_github('ML4LHS/runway')
 
 First, load the package.
 
-```{r eval=FALSE}
+```{r}
 library(runway)
 ```
 
@@ -160,4 +160,25 @@ cal_plot_multi(multi_model_dataset,
          model = 'model_name',
          n_bins = 0,
          show_loess = TRUE)
+```
+
+## ROC curve w/CI
+
+```{r}
+roc_plot(single_model_dataset, 
+         outcome = 'outcomes', 
+         prediction = 'predictions',
+         ci = TRUE, 
+         plot_title = 'Single ROC curve w/CI ribbon')
+```
+
+## Multiple ROC curves w/CI ribbons
+
+```{r}
+roc_plot_multi(multi_model_dataset, 
+         outcome = 'outcomes', 
+         prediction = 'predictions', 
+         model = 'model_name',
+         ci = TRUE,
+         plot_title = 'Multiple model ROC curves w/CI ribbons')
 ```

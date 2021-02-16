@@ -17,7 +17,9 @@ threshperf_plot(
   post_tp_geoms = NULL,
   post_dist_geoms = NULL,
   heights = c(10, 1),
-  widths = c(1, 2, 1)
+  widths = c(1, 2, 1),
+  positive = "has_sepsis",
+  thresholds = NULL
 )
 }
 \arguments{
