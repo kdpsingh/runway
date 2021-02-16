@@ -162,30 +162,14 @@ cal_plot_multi(multi_model_dataset,
          show_loess = TRUE)
 ```
 
-## ROC curve w/o CI ribbon
-
-```{r}
-roc_plot(single_model_dataset, 
-         outcome = 'outcomes', 
-         prediction = 'predictions')
-```
-
 ## ROC curve w/CI
 
 ```{r}
 roc_plot(single_model_dataset, 
          outcome = 'outcomes', 
-         prediction = 'predictions', 
-         ci = TRUE)
-```
-
-## Multiple ROC curves w/o CI
-
-```{r}
-roc_plot_multi(multi_model_dataset, 
-         outcome = 'outcomes', 
-         prediction = 'predictions', 
-         model = 'model_name')
+         prediction = 'predictions',
+         ci = TRUE, 
+         plot_title = 'Single ROC curve w/CI ribbon')
 ```
 
 ## Multiple ROC curves w/CI ribbons
@@ -194,6 +178,7 @@ roc_plot_multi(multi_model_dataset,
 roc_plot_multi(multi_model_dataset, 
          outcome = 'outcomes', 
          prediction = 'predictions', 
-         model = 'model_name', 
-         ci = TRUE)
+         model = 'model_name',
+         ci = TRUE,
+         plot_title = 'Multiple model ROC curves w/CI ribbons')
 ```

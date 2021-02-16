@@ -34,7 +34,8 @@ roc_plot <- function(df, outcome, prediction, ci = FALSE, plot_title = '') {
       alpha = 0.7,
       color = "grey"
     ) +
-    ggplot2::coord_equal()
+    ggplot2::coord_equal() +
+    ggplot2::ggtitle(plot_title)
 
   if(ci){
     g2 = g1 + ggplot2::geom_ribbon(
@@ -42,8 +43,8 @@ roc_plot <- function(df, outcome, prediction, ci = FALSE, plot_title = '') {
       ggplot2::aes(x = x, ymin = lower, ymax = upper),
       fill = "steelblue",
       alpha = 0.2
-    ) + ggplot2::ggtitle(capture.output(obj$ci))
-  } else g2 = g1 + ggplot2::ggtitle(plot_title)
+    )
+  } else g2 = g1
   g2
 }
 
@@ -87,7 +88,8 @@ roc_plot_multi <- function(df, outcome, prediction, model, ci = FALSE, plot_titl
     ) +
     ggplot2::coord_equal() +
     ggplot2::scale_color_brewer(name = 'name', palette = 'Set1') +
-    ggplot2::scale_fill_brewer(name = 'name', palette = 'Set1')
+    ggplot2::scale_fill_brewer(name = 'name', palette = 'Set1') +
+    ggplot2::ggtitle(plot_title)
 
   # build CI intervals
   if(ci){

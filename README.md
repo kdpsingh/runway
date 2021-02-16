@@ -181,37 +181,17 @@ cal_plot_multi(multi_model_dataset,
 
 <img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
 
-## ROC curve w/o CI ribbon
-
-``` r
-roc_plot(single_model_dataset, 
-         outcome = 'outcomes', 
-         prediction = 'predictions')
-```
-
-<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
-
 ## ROC curve w/CI
 
 ``` r
 roc_plot(single_model_dataset, 
          outcome = 'outcomes', 
-         prediction = 'predictions', 
-         ci = TRUE)
+         prediction = 'predictions',
+         ci = TRUE, 
+         plot_title = 'Single ROC curve w/CI ribbon')
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
-
-## Multiple ROC curves w/o CI
-
-``` r
-roc_plot_multi(multi_model_dataset, 
-         outcome = 'outcomes', 
-         prediction = 'predictions', 
-         model = 'model_name')
-```
-
-<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
 
 ## Multiple ROC curves w/CI ribbons
 
@@ -219,8 +199,9 @@ roc_plot_multi(multi_model_dataset,
 roc_plot_multi(multi_model_dataset, 
          outcome = 'outcomes', 
          prediction = 'predictions', 
-         model = 'model_name', 
-         ci = TRUE)
+         model = 'model_name',
+         ci = TRUE,
+         plot_title = 'Multiple model ROC curves w/CI ribbons')
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
