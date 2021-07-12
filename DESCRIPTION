@@ -1,6 +1,6 @@
 Package: runway
 Type: Package
-Title: Evaluation and Comparison of Prediction Models
+Title: Visualizing Prediction Model Performance
 Version: 0.0.0.9000
 Author: Karandeep Singh
 Maintainer: Karandeep Singh <kdpsingh@umich.edu>
