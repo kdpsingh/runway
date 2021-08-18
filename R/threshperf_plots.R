@@ -10,6 +10,11 @@
 #' the outcomes (expressed as 0/1s).
 #' @param prediction A character string containing the name of the column containing
 #' the predictions.
+#' @param statistics Character vector of statistics to include.
+#' Select among `c("sens", "spec", "ppv", "npv", "test_pos", "test_neg", "tp_rate", "tn_rate", "fn_rate", "fp_rate", "prevalence")`.
+#' Default is `c("sens", "spec", "ppv", "npv")`.
+#' @param prevalence Specify the prevalence of outcome for case-control studies.
+#' Default is `NULL` and the prevalence will be estimated from `data`.
 #' @param positive
 #' @param thresholds
 #' @return A data.frame containing the columns \code{.threshold}, \code{.metric},
@@ -18,7 +23,15 @@
 #' data(single_model_dataset)
 #' threshperf(single_model_dataset, outcome = 'outcomes', prediction = 'predictions')
 #' @export
-threshperf <- function(df, outcome, prediction, positive = 'has_sepsis', thresholds = NULL) {
+threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
+                       thresholds = NULL,
+                       statistics = c("sens", "spec", "ppv", "npv"),
+                       prevalence = NULL) {
+  statistics <-
+    match.arg(statistics,
+              choices = c("sens", "spec", "ppv", "npv", "test_pos", "test_neg",
+                          "tp_rate", "tn_rate", "fn_rate", "fp_rate", "prevalence"),
+              several.ok = TRUE)
 
   if(is.null(thresholds)){
     thresholds = unique(c(0,sort(unique(df[[prediction]])), 1))
@@ -26,7 +39,7 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis', thresho
 
   df <- dplyr::select(df, dplyr::all_of(c(outcome, prediction)))
 
-  df <- na.omit(df)
+  df <- stats::na.omit(df)
 
   df_orig <- df
 
@@ -37,7 +50,6 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis', thresho
     df[[outcome]] <- factor(df[[outcome]], levels = c(0,1))
   }
 
-
   df <-
     df %>%
     expand_preds(threshold = thresholds,
@@ -45,26 +57,60 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis', thresho
 
   df <-
     df %>%
-    dplyr::mutate(alt_pred = recode_data(!!rlang::parse_expr(outcome), !!rlang::parse_expr(prediction), .threshold))
+    dplyr::mutate(alt_pred = recode_data(!!rlang::parse_expr(outcome),
+                                         !!rlang::parse_expr(prediction), .threshold))
 
   df <- df %>% dplyr::group_by(.threshold)
 
-  df_metrics <- df %>%
-    two_class(truth = !!rlang::parse_expr(outcome), estimate = alt_pred)
+  df_metrics <-
+    df %>%
+    two_class(truth = !!rlang::parse_expr(outcome), estimate = alt_pred) %>%
+    # adding other stats using the prevalence
+    tidyr::pivot_wider(
+      id_cols = dplyr::all_of(c(".threshold", ".estimator")),
+      names_from = dplyr::all_of(".metric"),
+      values_from = dplyr::all_of(".estimate")
+    ) %>%
+    dplyr::mutate(
+      # TODO: Check prev calculation against the yardstick ordering!
+      prevalence =
+        .env$prevalence %||% unname((table(df$outcomes) / nrow(df))[2]),
+      # all calculations use sens, spec, and prev to be able to handle
+      # case-control data where true prev is not in data frame
+      tp_rate = .data$sens * .data$prevalence,
+      fp_rate = (1 - .data$spec) * (1 - .data$prevalence),
+      tn_rate = .data$spec * (1 - .data$prevalence),
+      fn_rate = (1 - .data$sens) * .data$prevalence,
+      test_pos = .data$tp_rate + .data$fp_rate,
+      test_neg = 1 - .data$test_pos,
+      ppv = .data$tp_rate / .data$test_pos,
+      npv = .data$tn_rate / .data$test_neg
+    ) %>%
+    tidyr::pivot_longer(
+      cols = -dplyr::all_of(c(".threshold", ".estimator")),
+      names_to = ".metric",
+      values_to = ".estimate"
+    ) %>%
+    dplyr::filter(.data$.metric %in% .env$statistics)
 
   suppressWarnings({df_metrics <-
     df_metrics %>%
     dplyr::group_by(.threshold) %>%
-    dplyr::mutate(denom =
-                    dplyr::case_when(
-                      .metric == 'sens' ~ sum(df_orig[[outcome]] == 1),
-                      .metric == 'spec' ~ sum(df_orig[[outcome]] == 0),
-                      .metric == 'ppv' ~ sum(df_orig[[prediction]] >= .threshold),
-                      .metric == 'npv' ~ sum(df_orig[[prediction]] < .threshold),
-                    )) %>%
+    dplyr::mutate(
+      denom =
+        dplyr::case_when(
+          .data$.metric == 'sens' ~ sum(df_orig[[outcome]] == 1),
+          .data$.metric == 'spec' ~ sum(df_orig[[outcome]] == 0),
+          .data$.metric == 'ppv' ~ sum(df_orig[[prediction]] >= .threshold),
+          .data$.metric == 'npv' ~ sum(df_orig[[prediction]] < .threshold),
+          .data$.metric %in% c("tp_rate", "fp_rate", "tn_rate", "fn_rate",
+                               "test_pos", "test_neg", "prevalence") ~ nrow(df_orig),
+
+        )
+    ) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(numer = round(.estimate * denom)) %>%
-    na.omit()})
+    dplyr::mutate(numer = round(.data$.estimate * .data$denom)) %>%
+    stats::na.omit()})
 
   df_ci = Hmisc::binconf(x = df_metrics$numer, n = df_metrics$denom,
                          alpha = 0.05, method = 'wilson') %>%

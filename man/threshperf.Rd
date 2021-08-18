@@ -4,7 +4,15 @@
 \alias{threshperf}
 \title{Calculates threshold-performance data}
 \usage{
-threshperf(df, outcome, prediction, positive = "has_sepsis", thresholds = NULL)
+threshperf(
+  df,
+  outcome,
+  prediction,
+  positive = "has_sepsis",
+  thresholds = NULL,
+  statistics = c("sens", "spec", "ppv", "npv"),
+  prevalence = NULL
+)
 }
 \arguments{
 \item{df}{The df as a data.frame.}
@@ -14,6 +22,13 @@ the outcomes (expressed as 0/1s).}
 
 \item{prediction}{A character string containing the name of the column containing
 the predictions.}
+
+\item{statistics}{Character vector of statistics to include.
+Select among \code{c("sens", "spec", "ppv", "npv", "test_pos", "test_neg", "tp_rate", "tn_rate", "fn_rate", "fp_rate", "prevalence")}.
+Default is \code{c("sens", "spec", "ppv", "npv")}.}
+
+\item{prevalence}{Specify the prevalence of outcome for case-control studies.
+Default is \code{NULL} and the prevalence will be estimated from \code{data}.}
 }
 \value{
 A data.frame containing the columns \code{.threshold}, \code{.metric},
@@ -21,7 +36,7 @@ A data.frame containing the columns \code{.threshold}, \code{.metric},
 }
 \description{
 This function is used by the \code{\link{threshperf_plot}} function. This is based on
-the `threshold_perf()` function from the `probably` package (a part of `tidymodels`)
+the \code{threshold_perf()} function from the \code{probably} package (a part of \code{tidymodels})
 but expands the capability to allow for the range of metrics to include positive and
 negative predictive value.
 }
