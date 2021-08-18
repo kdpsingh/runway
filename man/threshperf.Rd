@@ -23,8 +23,12 @@ the outcomes (expressed as 0/1s).}
 \item{prediction}{A character string containing the name of the column containing
 the predictions.}
 
+\item{thresholds}{Numeric vector of thresholds at which the performance
+statistics are calculated. Default is \code{NULL}, which returns performance
+statistics at each observed prediction level.}
+
 \item{statistics}{Character vector of statistics to include.
-Select among \code{c("sens", "spec", "ppv", "npv", "test_pos", "test_neg", "tp_rate", "tn_rate", "fn_rate", "fp_rate", "prevalence")}.
+Select among \code{c("sens", "spec", "ppv", "npv", "test_pos_rate", "test_neg_rate", "tp_rate", "tn_rate", "fn_rate", "fp_rate", "prevalence")}.
 Default is \code{c("sens", "spec", "ppv", "npv")}.}
 
 \item{prevalence}{Specify the prevalence of outcome for case-control studies.

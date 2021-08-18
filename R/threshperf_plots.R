@@ -16,7 +16,9 @@
 #' @param prevalence Specify the prevalence of outcome for case-control studies.
 #' Default is `NULL` and the prevalence will be estimated from `data`.
 #' @param positive
-#' @param thresholds
+#' @param thresholds Numeric vector of thresholds at which the performance
+#' statistics are calculated. Default is `NULL`, which returns performance
+#' statistics at each observed prediction level.
 #' @return A data.frame containing the columns \code{.threshold}, \code{.metric},
 #' \code{.estimator}, and \code{.estimate}
 #' @examples
