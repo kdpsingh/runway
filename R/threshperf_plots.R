@@ -11,7 +11,7 @@
 #' @param prediction A character string containing the name of the column containing
 #' the predictions.
 #' @param statistics Character vector of statistics to include.
-#' Select among `c("sens", "spec", "ppv", "npv", "test_pos", "test_neg", "tp_rate", "tn_rate", "fn_rate", "fp_rate", "prevalence")`.
+#' Select among `c("sens", "spec", "ppv", "npv", "test_pos_rate", "test_neg_rate", "tp_rate", "tn_rate", "fn_rate", "fp_rate", "prevalence")`.
 #' Default is `c("sens", "spec", "ppv", "npv")`.
 #' @param prevalence Specify the prevalence of outcome for case-control studies.
 #' Default is `NULL` and the prevalence will be estimated from `data`.
@@ -29,7 +29,7 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
                        prevalence = NULL) {
   statistics <-
     match.arg(statistics,
-              choices = c("sens", "spec", "ppv", "npv", "test_pos", "test_neg",
+              choices = c("sens", "spec", "ppv", "npv", "test_pos_rate", "test_neg_rate",
                           "tp_rate", "tn_rate", "fn_rate", "fp_rate", "prevalence"),
               several.ok = TRUE)
 
@@ -81,10 +81,10 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
       fp_rate = (1 - .data$spec) * (1 - .data$prevalence),
       tn_rate = .data$spec * (1 - .data$prevalence),
       fn_rate = (1 - .data$sens) * .data$prevalence,
-      test_pos = .data$tp_rate + .data$fp_rate,
-      test_neg = 1 - .data$test_pos,
-      ppv = .data$tp_rate / .data$test_pos,
-      npv = .data$tn_rate / .data$test_neg
+      test_pos_rate = .data$tp_rate + .data$fp_rate,
+      test_neg_rate = 1 - .data$test_pos_rate,
+      ppv = .data$tp_rate / .data$test_pos_rate,
+      npv = .data$tn_rate / .data$test_neg_rate
     ) %>%
     tidyr::pivot_longer(
       cols = -dplyr::all_of(c(".threshold", ".estimator")),
@@ -104,7 +104,7 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
           .data$.metric == 'ppv' ~ sum(df_orig[[prediction]] >= .threshold),
           .data$.metric == 'npv' ~ sum(df_orig[[prediction]] < .threshold),
           .data$.metric %in% c("tp_rate", "fp_rate", "tn_rate", "fn_rate",
-                               "test_pos", "test_neg", "prevalence") ~ nrow(df_orig),
+                               "test_pos_rate", "test_neg_rate", "prevalence") ~ nrow(df_orig),
 
         )
     ) %>%
