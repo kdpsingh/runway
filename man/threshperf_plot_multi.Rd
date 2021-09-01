@@ -61,8 +61,8 @@ The first and third elements refer to padding. Defaults to c(1, 2, 1).}
 }
 \value{
 A ggplot containing the threshold-performance plot. The 95 percent
-  confidence intervals are estimated using Wilson's interval from the
-  \code{Hmisc} \code{\link[Hmisc]{binconf}} function.
+confidence intervals are estimated using Wilson's interval from the
+\code{Hmisc} \code{\link[Hmisc]{binconf}} function.
 }
 \description{
 Generate a threshold-performance plot for multiple models with colored/shaded
