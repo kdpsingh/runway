@@ -6,8 +6,7 @@
 \alias{runway-package}
 \title{runway: Visualizing Prediction Model Performance}
 \description{
-Generate statistics and plots to calculate discrimination,
-    calibration, and decision curves for prediction models.
+Generate statistics and plots to calculate discrimination, calibration, and decision curves for prediction models.
 }
 \seealso{
 Useful links:

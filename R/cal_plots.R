@@ -25,27 +25,27 @@
 cal_plot <- function(df, outcome, prediction, n_bins = 10, show_loess = FALSE, plot_title = '', ...){
 
   # The calibration plot
-  g1 <- dplyr::mutate(df, bin = dplyr::ntile(!!rlang::parse_expr(prediction), n_bins)) %>%
+  g1 <- mutate(df, bin = ntile(!!parse_expr(prediction), n_bins)) %>%
     # Bin prediction into n_bins
-    dplyr::group_by(bin) %>%
-    dplyr::mutate(n = dplyr::n(), # Get ests and CIs
-           bin_pred = mean(!!rlang::parse_expr(prediction), na.rm = TRUE),
-           bin_prob = mean(as.numeric(as.character(!!rlang::parse_expr(outcome))), na.rm = TRUE),
+    group_by(bin) %>%
+    mutate(n = n(), # Get ests and CIs
+           bin_pred = mean(!!parse_expr(prediction), na.rm = TRUE),
+           bin_prob = mean(as.numeric(as.character(!!parse_expr(outcome))), na.rm = TRUE),
            se = sqrt((bin_prob * (1 - bin_prob)) / n),
            ul = bin_prob + 1.96 * se,
            ll = bin_prob - 1.96 * se) %>%
-    dplyr::mutate_at(dplyr::vars(ul, ll), . %>% scales::oob_squish(range = c(0,1))) %>%
-    dplyr::ungroup() %>%
-    ggplot2::ggplot() +
-    ggplot2::scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
-    ggplot2::scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
-    ggplot2::geom_abline(linetype = 'dashed') # 45 degree line indicating perfect calibration
+    mutate_at(vars(ul, ll), . %>% oob_squish(range = c(0,1))) %>%
+    ungroup() %>%
+    ggplot() +
+    scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
+    scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
+    geom_abline(linetype = 'dashed') # 45 degree line indicating perfect calibration
 
   if (n_bins > 0) {
     g1 = g1  +
-      ggplot2::geom_point(ggplot2::aes(x = bin_pred, y = bin_prob, ymin = ll, ymax = ul),
+      geom_point(aes(x = bin_pred, y = bin_prob, ymin = ll, ymax = ul),
                         size = 2, color = 'black') +
-      ggplot2::geom_errorbar(ggplot2::aes(x = bin_pred, y = bin_prob, ymin = ll, ymax = ul),
+      geom_errorbar(aes(x = bin_pred, y = bin_prob, ymin = ll, ymax = ul),
                            size = 0.5, color = "black", width = 0.02)
   }
     # geom_smooth(method = "lm", se = FALSE, linetype = "dashed",
@@ -54,33 +54,33 @@ cal_plot <- function(df, outcome, prediction, n_bins = 10, show_loess = FALSE, p
 
   if (show_loess) {
     g1 = g1 +
-    ggplot2::geom_smooth(ggplot2::aes(x = !!rlang::parse_expr(prediction), y = as.numeric(!!rlang::parse_expr(outcome))),
+    geom_smooth(aes(x = !!parse_expr(prediction), y = as.numeric(!!parse_expr(outcome))),
                color = "black", se = TRUE, method = "loess")
     # loess fit through estimates
   }
 
   g1 = g1 +
-    ggplot2::xlab("Predicted Probability") +
-    ggplot2::ylab("Observed Risk") +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(aspect.ratio = 1) +
-    ggplot2::ggtitle(plot_title)
+    xlab("Predicted Probability") +
+    ylab("Observed Risk") +
+    theme_minimal() +
+    theme(aspect.ratio = 1) +
+    ggtitle(plot_title)
 
   # The distribution plot
-  g2 <- ggplot2::ggplot(df, ggplot2::aes(x = !!rlang::parse_expr(prediction))) +
-    ggplot2::geom_histogram(fill = "black", bins = 100) +
-    ggplot2::scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
-    ggplot2::xlab("") +
-    ggplot2::ylab("") +
-    ggplot2::theme_minimal() +
-    ggeasy::easy_remove_y_axis() +
-    ggeasy::easy_remove_x_axis() +
-    ggplot2::theme_void() +
-    ggplot2::theme(aspect.ratio = 0.1)
+  g2 <- ggplot(df, aes(x = !!parse_expr(prediction))) +
+    geom_histogram(fill = "black", bins = 100) +
+    scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
+    xlab("") +
+    ylab("") +
+    theme_minimal() +
+    easy_remove_y_axis() +
+    easy_remove_x_axis() +
+    theme_void() +
+    theme(aspect.ratio = 0.1)
 
-  # g2 / g1 + patchwork::plot_layout(heights = c(1,10))
-  layout = c(patchwork::area(t = 1, b = 10, l = 1, r = 10),
-             patchwork::area(t = 11, b = 12, l = 1, r = 10))
+  # g2 / g1 + plot_layout(heights = c(1,10))
+  layout = c(area(t = 1, b = 10, l = 1, r = 10),
+             area(t = 11, b = 12, l = 1, r = 10))
 
   g1 / g2
 
@@ -120,27 +120,27 @@ cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, show_loe
 
   # The calibration plot
   g1 <- df %>%
-    dplyr::group_by(!!rlang::parse_expr(model)) %>%
-    dplyr::mutate(bin = dplyr::ntile(!!rlang::parse_expr(prediction), n_bins)) %>%
+    group_by(!!parse_expr(model)) %>%
+    mutate(bin = ntile(!!parse_expr(prediction), n_bins)) %>%
     # Bin prediction
-    dplyr::group_by(!!rlang::parse_expr(model), bin) %>%
-    dplyr::mutate(n = dplyr::n(), # Get ests and CIs
-           bin_pred = mean(!!rlang::parse_expr(prediction), na.rm = TRUE),
-           bin_prob = mean(as.numeric(as.character(!!rlang::parse_expr(outcome))), na.rm = TRUE),
+    group_by(!!parse_expr(model), bin) %>%
+    mutate(n = n(), # Get ests and CIs
+           bin_pred = mean(!!parse_expr(prediction), na.rm = TRUE),
+           bin_prob = mean(as.numeric(as.character(!!parse_expr(outcome))), na.rm = TRUE),
            se = sqrt((bin_prob * (1 - bin_prob)) / n),
            ul = bin_prob + 1.96 * se,
            ll = bin_prob - 1.96 * se) %>%
-    dplyr::mutate_at(dplyr::vars(ul, ll), . %>% scales::oob_squish(range = c(0,1))) %>%
-    dplyr::ungroup() %>%
-    ggplot2::ggplot() +
+    mutate_at(vars(ul, ll), . %>% oob_squish(range = c(0,1))) %>%
+    ungroup() %>%
+    ggplot() +
     # geom_errorbar(size = 0.5, width = 0.02) +
-    ggplot2::scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
-    ggplot2::scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
-    ggplot2::geom_abline(linetype = 'dashed') # 45 degree line indicating perfect calibration
+    scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
+    scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
+    geom_abline(linetype = 'dashed') # 45 degree line indicating perfect calibration
     # geom_smooth(method = "lm", se = FALSE, linetype = "dashed",
     #            color = "black", formula = y~-1 + x) +
     # straight line fit through estimates
-    # geom_smooth(ggplot2::aes(x = get(prediction), y = as.numeric(outcome)),
+    # geom_smooth(aes(x = get(prediction), y = as.numeric(outcome)),
     #            color = "red", se = FALSE, method = "loess") +
     # loess fit through estimates
     # scale_color_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
@@ -148,55 +148,55 @@ cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, show_loe
 
 
     if (show_loess == FALSE && n_bins > 0) {
-      g1 = g1 + ggplot2::aes(x = bin_pred,
+      g1 = g1 + aes(x = bin_pred,
                    y = bin_prob,
-                   color = !!rlang::parse_expr(model),
-                   fill = !!rlang::parse_expr(model)) +
-        ggplot2::geom_ribbon(ggplot2::aes(ymin = ll,
+                   color = !!parse_expr(model),
+                   fill = !!parse_expr(model)) +
+        geom_ribbon(aes(ymin = ll,
                                           ymax = ul,),
                              alpha = 1/how_many_models) +
-        ggplot2::geom_point(size = 2) +
-        ggplot2::geom_line(size = 1, alpha = 1/how_many_models)
+        geom_point(size = 2) +
+        geom_line(size = 1, alpha = 1/how_many_models)
     }
     else if (show_loess == TRUE && n_bins == 0) {
       g1 = g1 +
-        ggplot2::stat_smooth(ggplot2::aes(x = !!rlang::parse_expr(prediction), y = as.numeric(!!rlang::parse_expr(outcome)),
-                                          color = !!rlang::parse_expr(model), fill = !!rlang::parse_expr(model)),
+        stat_smooth(aes(x = !!parse_expr(prediction), y = as.numeric(!!parse_expr(outcome)),
+                                          color = !!parse_expr(model), fill = !!parse_expr(model)),
                             #              alpha = 1/how_many_models), # currently ignored by geom_smooth
                              se = TRUE, method = "loess")
       # loess fit through estimates
     }
 
   g1 = g1 +
-    ggplot2::xlab("Predicted Probability") +
-    ggplot2::ylab("Observed Risk") +
-    ggplot2::scale_color_brewer(name = 'Models', palette = 'Set1') +
-    ggplot2::scale_fill_brewer(name = 'Models', palette = 'Set1') +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(aspect.ratio = 1) +
-    ggplot2::ggtitle(plot_title)
+    xlab("Predicted Probability") +
+    ylab("Observed Risk") +
+    scale_color_brewer(name = 'Models', palette = 'Set1') +
+    scale_fill_brewer(name = 'Models', palette = 'Set1') +
+    theme_minimal() +
+    theme(aspect.ratio = 1) +
+    ggtitle(plot_title)
 
 
   # The distribution plot
-  g2 <- ggplot2::ggplot(df, ggplot2::aes(x = !!rlang::parse_expr(prediction))) +
-    ggplot2::geom_density(alpha = 1/how_many_models, ggplot2::aes(fill = !!rlang::parse_expr(model), color = !!rlang::parse_expr(model))) +
-    ggplot2::scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
-    ggplot2::coord_fixed() +
+  g2 <- ggplot(df, aes(x = !!parse_expr(prediction))) +
+    geom_density(alpha = 1/how_many_models, aes(fill = !!parse_expr(model), color = !!parse_expr(model))) +
+    scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
+    coord_fixed() +
     # scale_color_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
     # scale_fill_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
-    ggplot2::xlab("") +
-    ggplot2::ylab("") +
-    ggplot2::scale_color_brewer(palette = 'Set1') +
-    ggplot2::scale_fill_brewer(palette = 'Set1') +
-    ggplot2::theme_minimal() +
-    ggeasy::easy_remove_y_axis() +
+    xlab("") +
+    ylab("") +
+    scale_color_brewer(palette = 'Set1') +
+    scale_fill_brewer(palette = 'Set1') +
+    theme_minimal() +
+    easy_remove_y_axis() +
     #  easy_remove_x_axis(what = c('ticks','line')) +
-    ggeasy::easy_remove_legend(fill, color) +
-    ggplot2::theme_void() +
-    ggplot2::theme(aspect.ratio = 0.1)
+    easy_remove_legend(fill, color) +
+    theme_void() +
+    theme(aspect.ratio = 0.1)
 
-  layout = c(patchwork::area(t = 1, b = 10, l = 1, r = 10),
-             patchwork::area(t = 11, b = 12, l = 1, r = 10))
+  layout = c(area(t = 1, b = 10, l = 1, r = 10),
+             area(t = 11, b = 12, l = 1, r = 10))
 
   g1 / g2
 
