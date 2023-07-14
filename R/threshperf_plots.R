@@ -39,9 +39,9 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
     thresholds = unique(c(0,sort(unique(df[[prediction]])), 1))
   }
 
-  df <- dplyr::select(df, dplyr::all_of(c(outcome, prediction)))
+  df <- select(df, all_of(c(outcome, prediction)))
 
-  df <- stats::na.omit(df)
+  df <- na.omit(df)
 
   df_orig <- df
 
@@ -59,21 +59,21 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
 
   df <-
     df %>%
-    dplyr::mutate(alt_pred = recode_data(!!rlang::parse_expr(outcome),
-                                         !!rlang::parse_expr(prediction), .threshold))
+    mutate(alt_pred = recode_data(!!parse_expr(outcome),
+                                         !!parse_expr(prediction), .threshold))
 
-  df <- df %>% dplyr::group_by(.threshold)
+  df <- df %>% group_by(.threshold)
 
   df_metrics <-
     df %>%
-    two_class(truth = !!rlang::parse_expr(outcome), estimate = alt_pred) %>%
+    two_class(truth = !!parse_expr(outcome), estimate = alt_pred) %>%
     # adding other stats using the prevalence
-    tidyr::pivot_wider(
-      id_cols = dplyr::all_of(c(".threshold", ".estimator")),
-      names_from = dplyr::all_of(".metric"),
-      values_from = dplyr::all_of(".estimate")
+    pivot_wider(
+      id_cols = all_of(c(".threshold", ".estimator")),
+      names_from = all_of(".metric"),
+      values_from = all_of(".estimate")
     ) %>%
-    dplyr::mutate(
+    mutate(
       # TODO: Check prev calculation against the yardstick ordering!
       prevalence =
         .env$prevalence %||% unname((table(df$outcomes) / nrow(df))[2]),
@@ -88,19 +88,19 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
       ppv = .data$tp_rate / .data$test_pos_rate,
       npv = .data$tn_rate / .data$test_neg_rate
     ) %>%
-    tidyr::pivot_longer(
-      cols = -dplyr::all_of(c(".threshold", ".estimator")),
+    pivot_longer(
+      cols = -all_of(c(".threshold", ".estimator")),
       names_to = ".metric",
       values_to = ".estimate"
     ) %>%
-    dplyr::filter(.data$.metric %in% .env$statistics)
+    filter(.data$.metric %in% .env$statistics)
 
   suppressWarnings({df_metrics <-
     df_metrics %>%
-    dplyr::group_by(.threshold) %>%
-    dplyr::mutate(
+    group_by(.threshold) %>%
+    mutate(
       denom =
-        dplyr::case_when(
+        case_when(
           .data$.metric == 'sens' ~ sum(df_orig[[outcome]] == 1),
           .data$.metric == 'spec' ~ sum(df_orig[[outcome]] == 0),
           .data$.metric == 'ppv' ~ sum(df_orig[[prediction]] >= .threshold),
@@ -110,17 +110,17 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
 
         )
     ) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(numer = round(.data$.estimate * .data$denom)) %>%
-    stats::na.omit()})
+    ungroup() %>%
+    mutate(numer = round(.data$.estimate * .data$denom)) %>%
+    na.omit()})
 
-  df_ci = Hmisc::binconf(x = df_metrics$numer, n = df_metrics$denom,
+  df_ci = binconf(x = df_metrics$numer, n = df_metrics$denom,
                          alpha = 0.05, method = 'wilson') %>%
-    dplyr::as_tibble() %>%
-    dplyr::rename(ll = Lower, ul = Upper) %>%
-    dplyr::mutate_at(dplyr::vars(ul, ll), . %>% scales::oob_squish(range = c(0,1)))
+    as_tibble() %>%
+    rename(ll = Lower, ul = Upper) %>%
+    mutate_at(vars(ul, ll), . %>% oob_squish(range = c(0,1)))
 
-  df_metrics = dplyr::bind_cols(df_metrics, df_ci)
+  df_metrics = bind_cols(df_metrics, df_ci)
 
   data.frame(df_metrics, check.names = FALSE, stringsAsFactors = FALSE)
 }
@@ -172,22 +172,22 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
   tp_data = threshperf(df, outcome, prediction, thresholds)
   tp_data =
     tp_data %>%
-    dplyr::group_by(.metric) %>%
-    dplyr::mutate(denom_frac =
-                    dplyr::if_else(.metric %in% c('ppv', 'npv'),
+    group_by(.metric) %>%
+    mutate(denom_frac =
+                    if_else(.metric %in% c('ppv', 'npv'),
                                    denom/max(denom), NA_real_, NA_real_)) %>%
-    dplyr::ungroup()
+    ungroup()
 
   tp_plot =
     tp_data %>%
-    dplyr::mutate(.metric = dplyr::case_when(
+    mutate(.metric = case_when(
       .metric == 'npv' ~ 'NPV',
       .metric == 'ppv' ~ 'PPV',
       .metric == 'spec' ~ 'Specificity',
       .metric == 'sens' ~ 'Sensitivity')) %>%
-    dplyr::mutate(.metric = factor(.metric, levels = c('Sensitivity', 'Specificity', 'PPV', 'NPV'))) %>%
-    dplyr::mutate_at(dplyr::vars(.estimate, ll, ul), . %>% {. * 100}) %>%
-    ggplot2::ggplot(ggplot2::aes(x = .threshold,
+    mutate(.metric = factor(.metric, levels = c('Sensitivity', 'Specificity', 'PPV', 'NPV'))) %>%
+    mutate_at(vars(.estimate, ll, ul), . %>% {. * 100}) %>%
+    ggplot(aes(x = .threshold,
                                  y = .estimate,
                                  ymin = ll,
                                  ymax = ul))
@@ -201,17 +201,17 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
   if (show_denom) {
     tp_plot =
       tp_plot +
-      ggplot2::geom_ribbon(ggplot2::aes(ymin = 0, ymax = denom_frac*100), fill = 'grey', alpha = 1/3)
+      geom_ribbon(aes(ymin = 0, ymax = denom_frac*100), fill = 'grey', alpha = 1/3)
   }
 
   tp_plot = tp_plot +
-    ggplot2::geom_ribbon(fill = 'grey') +
-    ggplot2::geom_line(size = 1) +
-    ggplot2::facet_grid(.metric~.) +
-    ggplot2::theme_bw() +
-    ggplot2::coord_cartesian(xlim=c(xmin,xmax)) +
-    ggplot2::labs(x = 'Threshold', y = 'Performance (%)') +
-    ggplot2::ggtitle(plot_title)
+    geom_ribbon(fill = 'grey') +
+    geom_line(size = 1) +
+    facet_grid(.metric~.) +
+    theme_bw() +
+    coord_cartesian(xlim=c(xmin,xmax)) +
+    labs(x = 'Threshold', y = 'Performance (%)') +
+    ggtitle(plot_title)
 
   if (!is.null(post_tp_geoms)) {
     tp_plot =
@@ -221,7 +221,7 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
 
   threshold_dist_plot =
     df %>%
-    ggplot2::ggplot(ggplot2::aes(x=!!rlang::parse_expr(prediction)))
+    ggplot(aes(x=!!parse_expr(prediction)))
 
   if (!is.null(pre_dist_geoms)) {
     threshold_dist_plot =
@@ -231,9 +231,9 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
 
   threshold_dist_plot =
     threshold_dist_plot +
-    ggplot2::geom_histogram(fill = 'black', bins = 100) +
-    ggplot2::coord_cartesian(xlim=c(xmin,xmax)) +
-    ggplot2::theme_void()
+    geom_histogram(fill = 'black', bins = 100) +
+    coord_cartesian(xlim=c(xmin,xmax)) +
+    theme_void()
 
   if (!is.null(post_dist_geoms)) {
     threshold_dist_plot =
@@ -241,10 +241,10 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
       post_dist_geoms
   }
 
-  patchwork::plot_spacer() +
-    (tp_plot / threshold_dist_plot + patchwork::plot_layout(heights = heights)) +
-    patchwork::plot_spacer() +
-    patchwork::plot_layout(widths = widths)
+  plot_spacer() +
+    (tp_plot / threshold_dist_plot + plot_layout(heights = heights)) +
+    plot_spacer() +
+    plot_layout(widths = widths)
 }
 
 #' Generate a threshold-performance plot for multiple models with colored/shaded
@@ -302,23 +302,23 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
     tp_data_list[[model_name]][[model]] <- model_name
   }
 
-  tp_data = dplyr::bind_rows(tp_data_list)
+  tp_data = bind_rows(tp_data_list)
 
   tp_plot =
     tp_data %>%
-    dplyr::mutate(.metric = dplyr::case_when(
+    mutate(.metric = case_when(
       .metric == 'npv' ~ 'NPV',
       .metric == 'ppv' ~ 'PPV',
       .metric == 'spec' ~ 'Specificity',
       .metric == 'sens' ~ 'Sensitivity')) %>%
-    dplyr::mutate(.metric = factor(.metric, levels = c('Sensitivity', 'Specificity', 'PPV', 'NPV'))) %>%
-    dplyr::mutate_at(dplyr::vars(.estimate, ll, ul), . %>% {. * 100}) %>%
-    ggplot2::ggplot(ggplot2::aes(x = .threshold,
+    mutate(.metric = factor(.metric, levels = c('Sensitivity', 'Specificity', 'PPV', 'NPV'))) %>%
+    mutate_at(vars(.estimate, ll, ul), . %>% {. * 100}) %>%
+    ggplot(aes(x = .threshold,
                                  y = .estimate,
                                  ymin = ll,
                                  ymax = ul,
-                                 color = !!rlang::parse_expr(model),
-                                 fill = !!rlang::parse_expr(model)))
+                                 color = !!parse_expr(model),
+                                 fill = !!parse_expr(model)))
 
 
   if (!is.null(pre_tp_geoms)) {
@@ -328,15 +328,15 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
   }
 
   tp_plot = tp_plot +
-    ggplot2::geom_ribbon(alpha = 1/how_many_models) +
-    ggplot2::geom_line(size = 1) +
-    ggplot2::facet_grid(.metric~.) +
-    ggplot2::theme_bw() +
-    ggplot2::coord_cartesian(xlim=c(xmin,xmax)) +
-    ggplot2::labs(x = 'Threshold', y = 'Performance (%)') +
-    ggplot2::scale_color_brewer(name = 'Models', palette = 'Set1') +
-    ggplot2::scale_fill_brewer(name = 'Models', palette = 'Set1') +
-    ggplot2::ggtitle(plot_title)
+    geom_ribbon(alpha = 1/how_many_models) +
+    geom_line(size = 1) +
+    facet_grid(.metric~.) +
+    theme_bw() +
+    coord_cartesian(xlim=c(xmin,xmax)) +
+    labs(x = 'Threshold', y = 'Performance (%)') +
+    scale_color_brewer(name = 'Models', palette = 'Set1') +
+    scale_fill_brewer(name = 'Models', palette = 'Set1') +
+    ggtitle(plot_title)
 
   if (!is.null(post_tp_geoms)) {
     tp_plot =
@@ -344,7 +344,7 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
       post_tp_geoms
   }
 
-  threshold_dist_plot <- ggplot2::ggplot(df, ggplot2::aes(x = !!rlang::parse_expr(prediction)))
+  threshold_dist_plot <- ggplot(df, aes(x = !!parse_expr(prediction)))
 
   if (!is.null(pre_dist_geoms)) {
     threshold_dist_plot =
@@ -354,19 +354,19 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
 
   threshold_dist_plot =
     threshold_dist_plot +
-    ggplot2::geom_density(alpha = 1/how_many_models, ggplot2::aes(fill = !!rlang::parse_expr(model), color = !!rlang::parse_expr(model))) +
-    ggplot2::scale_x_continuous(limits = c(xmin, xmax), breaks = seq(xmin, xmax, by = (xmax-xmin)/10)) +
+    geom_density(alpha = 1/how_many_models, aes(fill = !!parse_expr(model), color = !!parse_expr(model))) +
+    scale_x_continuous(limits = c(xmin, xmax), breaks = seq(xmin, xmax, by = (xmax-xmin)/10)) +
     # scale_color_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
     # scale_fill_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
-    ggplot2::xlab("") +
-    ggplot2::ylab("") +
-    ggplot2::scale_color_brewer(palette = 'Set1') +
-    ggplot2::scale_fill_brewer(palette = 'Set1') +
-    ggplot2::theme_minimal() +
-    ggeasy::easy_remove_y_axis() +
+    xlab("") +
+    ylab("") +
+    scale_color_brewer(palette = 'Set1') +
+    scale_fill_brewer(palette = 'Set1') +
+    theme_minimal() +
+    easy_remove_y_axis() +
     #  easy_remove_x_axis(what = c('ticks','line')) +
-    ggeasy::easy_remove_legend(fill, color) +
-    ggplot2::theme_void()
+    easy_remove_legend(fill, color) +
+    theme_void()
 
   if (!is.null(post_dist_geoms)) {
     threshold_dist_plot =
@@ -375,8 +375,9 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
   }
 
 
-  patchwork::plot_spacer() +
-    (tp_plot / threshold_dist_plot + patchwork::plot_layout(heights = heights)) +
-    patchwork::plot_spacer() +
-    patchwork::plot_layout(widths = widths)
+  plot_spacer() +
+    (tp_plot / threshold_dist_plot + plot_layout(heights = heights)) +
+    plot_spacer() +
+    plot_layout(widths = widths)
 }
+
