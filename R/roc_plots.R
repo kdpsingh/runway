@@ -36,8 +36,9 @@ roc_plot <- function(df, outcome, prediction, ci = FALSE, plot_title = '') {
     ) +
     ggplot2::coord_equal() +
     ggplot2::ggtitle(plot_title) + 
-    ggplot2::xlab("Specificity") + 
-    ggplot2::ylab("Sensitivity")
+    ggplot2::xlab("1 - Specificity") + 
+    ggplot2::ylab("Sensitivity") + 
+    ggplot2::scale_x_continuous(breaks = seq(0, 1, by = 0.25), limits = c(0, 1), labels = c("0", "0.25", "0.5", "0.75", "1"))
 
   if(ci){
     g2 = g1 + ggplot2::geom_ribbon(
@@ -94,8 +95,9 @@ roc_plot_multi <- function(df, outcome, prediction, model, ci = FALSE, plot_titl
     ggplot2::scale_color_brewer(name = 'Models', palette = 'Set1') +
     ggplot2::scale_fill_brewer(name = 'Models', palette = 'Set1') +
     ggplot2::ggtitle(plot_title) + 
-    ggplot2::xlab("Specificity") + 
-    ggplot2::ylab("Sensitivity")
+    ggplot2::xlab("1 - Specificity") + 
+    ggplot2::ylab("Sensitivity") + 
+    ggplot2::scale_x_continuous(breaks = seq(0, 1, by = 0.25), limits = c(0, 1), labels = c("0", "0.25", "0.5", "0.75", "1"))
 
   # build CI intervals
   if(ci){
