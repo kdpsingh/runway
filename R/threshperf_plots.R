@@ -8,6 +8,7 @@
 #' @param df The df as a data.frame.
 #' @param outcome A character string containing the name of the column containing
 #' the outcomes (expressed as 0/1s).
+#' @param positive A character string containing the value of outcome that is the positive class.
 #' @param prediction A character string containing the name of the column containing
 #' the predictions.
 #' @param statistics Character vector of statistics to include.
@@ -15,7 +16,6 @@
 #' Default is `c("sens", "spec", "ppv", "npv")`.
 #' @param prevalence Specify the prevalence of outcome for case-control studies.
 #' Default is `NULL` and the prevalence will be estimated from `data`.
-#' @param positive
 #' @param thresholds Numeric vector of thresholds at which the performance
 #' statistics are calculated. Default is `NULL`, which returns performance
 #' statistics at each observed prediction level.
@@ -23,9 +23,9 @@
 #' \code{.estimator}, and \code{.estimate}
 #' @examples
 #' data(single_model_dataset)
-#' threshperf(single_model_dataset, outcome = 'outcomes', prediction = 'predictions')
+#' threshperf(single_model_dataset, outcome = 'outcomes', positive = '1', prediction = 'predictions')
 #' @export
-threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
+threshperf <- function(df, outcome, positive, prediction, 
                        thresholds = NULL,
                        statistics = c("sens", "spec", "ppv", "npv"),
                        prevalence = NULL) {
@@ -43,14 +43,10 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
 
   df <- stats::na.omit(df)
 
-  df_orig <- df
-
   # IMPORTANT because order of levels matters to yardstick
-  if (getOption('yardstick.event_first', default = TRUE)) {
-    df[[outcome]] <- factor(df[[outcome]], levels = c(1,0))
-  } else {
-    df[[outcome]] <- factor(df[[outcome]], levels = c(0,1))
-  }
+
+  df[[outcome]] = ifelse(positive == df[[outcome]], 1, 0)  
+  df[[outcome]] = factor(df[[outcome]], levels = c(1, 0))
 
   df <-
     df %>%
@@ -61,6 +57,9 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
     df %>%
     dplyr::mutate(alt_pred = recode_data(!!rlang::parse_expr(outcome),
                                          !!rlang::parse_expr(prediction), .threshold))
+
+  df_orig <- df
+
 
   df <- df %>% dplyr::group_by(.threshold)
 
@@ -76,7 +75,7 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
     dplyr::mutate(
       # TODO: Check prev calculation against the yardstick ordering!
       prevalence =
-        .env$prevalence %||% unname((table(df$outcomes) / nrow(df))[2]),
+        .env$prevalence %||% unname((table(df[[outcome]]) / nrow(df))[1]),
       # all calculations use sens, spec, and prev to be able to handle
       # case-control data where true prev is not in data frame
       tp_rate = .data$sens * .data$prevalence,
@@ -103,8 +102,8 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
         dplyr::case_when(
           .data$.metric == 'sens' ~ sum(df_orig[[outcome]] == 1),
           .data$.metric == 'spec' ~ sum(df_orig[[outcome]] == 0),
-          .data$.metric == 'ppv' ~ sum(df_orig[[prediction]] >= .threshold),
-          .data$.metric == 'npv' ~ sum(df_orig[[prediction]] < .threshold),
+          .data$.metric == 'ppv' ~ sum(df_orig$alt_pred == 1),
+          .data$.metric == 'npv' ~ sum(df_orig$alt_pred == 0),
           .data$.metric %in% c("tp_rate", "fp_rate", "tn_rate", "fn_rate",
                                "test_pos_rate", "test_neg_rate", "prevalence") ~ nrow(df_orig),
 
@@ -130,6 +129,7 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
 #' @param df The df as a data.frame.
 #' @param outcome A character string containing the name of the column
 #'   containing the outcomes (expressed as 0/1s).
+#' @param positive A character string containing the value of outcome that is the positive class.
 #' @param prediction A character string containing the name of the column
 #'   containing the predictions.
 #' @param show_denom Show the denominator (as a fraction of the maximum
@@ -151,16 +151,15 @@ threshperf <- function(df, outcome, prediction, positive = 'has_sepsis',
 #'   Defaults to c(10, 1).
 #' @param widths A numeric vector of length 3 with ratio of widths of plots.
 #'   The first and third elements refer to padding. Defaults to c(1, 2, 1).
-#' @param positive
 #' @param thresholds
 #' @return A ggplot containing the threshold-performance plot. The 95 percent
 #'   confidence intervals are estimated using Wilson's interval from the
 #'   \code{Hmisc} \code{\link[Hmisc]{binconf}} function.
 #' @examples
 #' data(single_model_dataset)
-#' threshperf_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions')
+#' threshperf_plot(single_model_dataset, outcome = 'outcomes', positive = '1', prediction = 'predictions')
 #' @export
-threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_title = '',
+threshperf_plot <- function(df, outcome, positive, prediction, show_denom = TRUE, plot_title = '',
                             xmin = 0,
                             xmax = 1,
                             pre_tp_geoms = NULL,
@@ -168,8 +167,9 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
                             post_tp_geoms = NULL,
                             post_dist_geoms = NULL,
                             heights = c(10,1),
-                            widths = c(1,2,1),positive = 'has_sepsis', thresholds = NULL) {
-  tp_data = threshperf(df, outcome, prediction, thresholds)
+                            widths = c(1,2,1),
+                            thresholds = NULL) {
+  tp_data = threshperf(df, outcome, positive, prediction, thresholds)
   tp_data =
     tp_data %>%
     dplyr::group_by(.metric) %>%
@@ -253,6 +253,7 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
 #' @param df The df as a data.frame.
 #' @param outcome A character string containing the name of the column
 #'   containing the outcomes (expressed as 0/1s).
+#' @param positive A character string containing the value of outcome that is the positive class.
 #' @param prediction A character string containing the name of the column
 #'   containing the predictions.
 #' @param model A character string containing the name of the column containing
@@ -279,9 +280,9 @@ threshperf_plot <- function(df, outcome, prediction, show_denom = TRUE, plot_tit
 #'   \code{Hmisc} \code{\link[Hmisc]{binconf}} function.
 #' @examples
 #' data(multi_model_dataset)
-#' threshperf_plot_multi(multi_model_dataset, outcome = 'outcomes', prediction = 'predictions', model = 'model_name')
+#' threshperf_plot_multi(multi_model_dataset, outcome = 'outcomes', positive = '1', prediction = 'predictions', model = 'model_name')
 #' @export
-threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '',
+threshperf_plot_multi <- function(df, outcome, positive, prediction, model, plot_title = '',
                                   xmin = 0,
                                   xmax = 1,
                                   pre_tp_geoms = NULL,
@@ -298,6 +299,7 @@ threshperf_plot_multi <- function(df, outcome, prediction, model, plot_title = '
     tp_data_list[[model_name]] <-
       threshperf(df[df[[model]] == model_name,],
                  outcome,
+                 positive,
                  prediction, thresholds)
     tp_data_list[[model_name]][[model]] <- model_name
   }
