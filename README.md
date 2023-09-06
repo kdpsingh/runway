@@ -9,6 +9,8 @@
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
+Warning: {runway} is currently broken and undergoing fixes. It is not usable in its current form.
+
 The goal of runway is to generate statistics and plots to calculate
 discrimination, calibration, and decision curves for prediction models.
 
