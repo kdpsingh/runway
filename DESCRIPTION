@@ -1,7 +1,7 @@
 Type: Package
 Package: runway
 Title: Visualizing Prediction Model Performance
-Version: 0.0.0.9000
+Version: 0.1.0
 Author: Karandeep Singh
 Maintainer: Karandeep Singh <kdpsingh@umich.edu>
 Description: Generate statistics and plots to calculate discrimination,

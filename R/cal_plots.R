@@ -7,25 +7,33 @@
 #' @param df The df as a data.frame.
 #' @param outcome A character string containing the name of the column
 #'   containing the outcomes (expressed as 0/1s).
+#' @param positive A character string containing the value of outcome that is the positive class.
 #' @param prediction A character string containing the name of the column
 #'   containing the predictions.
 #' @param n_bins Number of bins. Defaults to 10. Set to 0 to hide binned
 #'   calibration.
 #' @param show_loess Whether to show loess smoothed calibration estimates.
-#'   Defaults to FALSE. For \code{cal_plot()}, you can display both a binned
-#'   calibration plot and a loess curve. In contrast, for
-#'   \code{cal_plot_multi()}, these options are mutually exclusive.
+#'   Defaults to FALSE. You can either display a binned calibration plot or a loess curve.
+#'   These options are mutually exclusive.
 #' @param plot_title A character string containing the title for the resulting
 #'   plot.
 #' @return A ggplot containing the calibration plot
 #' @examples
 #' data(single_model_dataset)
-#' cal_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions', n_bins = 5)
+#' cal_plot(single_model_dataset, outcome = 'outcomes', positive = '1', prediction = 'predictions', n_bins = 5)
 #' @export
-cal_plot <- function(df, outcome, prediction, n_bins = 10, show_loess = FALSE, plot_title = '', ...){
+cal_plot <- function(df, outcome, positive, prediction, n_bins = 10, show_loess = FALSE, plot_title = '', ...){
+
+if((n_bins > 0 && show_loess == TRUE) || (n_bins == 0 && show_loess == FALSE)) {
+    stop('You must either set n_bins > 0 and show_loess to FALSE or set n_bins to 0 and show_loess to TRUE. Both cannot be displayed.')
+  }
+
+  # Converts outcome to be 0s and 1s
+  df[[outcome]] = ifelse(positive == df[[outcome]], 1, 0)
 
   # The calibration plot
-  g1 <- dplyr::mutate(df, bin = dplyr::ntile(!!rlang::parse_expr(prediction), n_bins)) %>%
+  if (n_bins > 0) {
+  df <- dplyr::mutate(df, bin = dplyr::ntile(!!rlang::parse_expr(prediction), n_bins)) %>%
     # Bin prediction into n_bins
     dplyr::group_by(bin) %>%
     dplyr::mutate(n = dplyr::n(), # Get ests and CIs
@@ -35,19 +43,14 @@ cal_plot <- function(df, outcome, prediction, n_bins = 10, show_loess = FALSE, p
            ul = bin_prob + 1.96 * se,
            ll = bin_prob - 1.96 * se) %>%
     dplyr::mutate_at(dplyr::vars(ul, ll), . %>% scales::oob_squish(range = c(0,1))) %>%
-    dplyr::ungroup() %>%
-    ggplot2::ggplot() +
+    dplyr::ungroup()
+  }
+
+  g1 = ggplot2::ggplot(df) +
     ggplot2::scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
     ggplot2::scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
     ggplot2::geom_abline(linetype = 'dashed') # 45 degree line indicating perfect calibration
 
-  if (n_bins > 0) {
-    g1 = g1  +
-      ggplot2::geom_point(ggplot2::aes(x = bin_pred, y = bin_prob, ymin = ll, ymax = ul),
-                        size = 2, color = 'black') +
-      ggplot2::geom_errorbar(ggplot2::aes(x = bin_pred, y = bin_prob, ymin = ll, ymax = ul),
-                           size = 0.5, color = "black", width = 0.02)
-  }
     # geom_smooth(method = "lm", se = FALSE, linetype = "dashed",
     #             color = "black", formula = y~-1 + x) +
     # straight line fit through estimates
@@ -57,6 +60,12 @@ cal_plot <- function(df, outcome, prediction, n_bins = 10, show_loess = FALSE, p
     ggplot2::geom_smooth(ggplot2::aes(x = !!rlang::parse_expr(prediction), y = as.numeric(!!rlang::parse_expr(outcome))),
                color = "black", se = TRUE, method = "loess")
     # loess fit through estimates
+  } else { # we already checked at the top to ensure these options are mutually exclusive
+    g1 = g1  +
+      ggplot2::geom_point(ggplot2::aes(x = bin_pred, y = bin_prob, ymin = ll, ymax = ul),
+                        size = 2, color = 'black') +
+      ggplot2::geom_errorbar(ggplot2::aes(x = bin_pred, y = bin_prob, ymin = ll, ymax = ul),
+                           size = 0.5, color = "black", width = 0.02)
   }
 
   g1 = g1 +
@@ -95,31 +104,35 @@ cal_plot <- function(df, outcome, prediction, n_bins = 10, show_loess = FALSE, p
 #' @param df The df as a data.frame.
 #' @param outcome A character string containing the name of the column containing
 #' the outcomes (expressed as 0/1s).
+#' @param positive A character string containing the value of outcome that is the positive class.
 #' @param prediction A character string containing the name of the column containing
 #' the predictions.
 #' @param model A character string containing the name of the column containing
 #' the model names
 #' @param n_bins Number of bins. Defaults to 10. Set to 0 to hide binned calibration.
-#' @param show_loess Whether to show loess smoothed calibration estimates. Defaults to FALSE.
-#' For \code{cal_plot()}, you can display both a binned calibration plot and a loess curve. In
-#' contrast, for \code{cal_plot_multi()}, these options are mutually exclusive. To display a loess
-#' line, you must set \code{n_bins} to 0.
+#' @param show_loess Whether to show loess smoothed calibration estimates.
+#'   Defaults to FALSE. You can either display a binned calibration plot or a loess curve.
+#'   These options are mutually exclusive.
 #' @param plot_title A character string containing the title for the resulting plot.
 #' @return A ggplot containing the calibration plot
 #' @examples
 #' data(multi_model_dataset)
-#' cal_plot_multi(multi_model_dataset, outcome = 'outcomes',model = 'model_name', prediction = 'predictions', n_bins = 5)
+#' cal_plot_multi(multi_model_dataset, outcome = 'outcomes', positive = '1', prediction = 'predictions', model = 'model_name', n_bins = 5)
 #' @export
-cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, show_loess = FALSE, plot_title = '', ...){
+cal_plot_multi <- function(df, outcome, positive, prediction, model, n_bins = 10, show_loess = FALSE, plot_title = '', ...){
 
   if((n_bins > 0 && show_loess == TRUE) || (n_bins == 0 && show_loess == FALSE)) {
-    stop('You must either set n_bins > 0 and show_loess to FALSE or set n_bins to 0 and show_loess to TRUE. Both cannot be displayed for cal_plot_multi()')
+    stop('You must either set n_bins > 0 and show_loess to FALSE or set n_bins to 0 and show_loess to TRUE. Both cannot be displayed.')
   }
 
   how_many_models = df[[model]] %>% unique() %>% length()
 
+  # Converts outcome to be 0s and 1s
+  df[[outcome]] = ifelse(positive == df[[outcome]], 1, 0)
+
   # The calibration plot
-  g1 <- df %>%
+  if (n_bins > 0) {
+  df <- df %>%
     dplyr::group_by(!!rlang::parse_expr(model)) %>%
     dplyr::mutate(bin = dplyr::ntile(!!rlang::parse_expr(prediction), n_bins)) %>%
     # Bin prediction
@@ -131,8 +144,9 @@ cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, show_loe
            ul = bin_prob + 1.96 * se,
            ll = bin_prob - 1.96 * se) %>%
     dplyr::mutate_at(dplyr::vars(ul, ll), . %>% scales::oob_squish(range = c(0,1))) %>%
-    dplyr::ungroup() %>%
-    ggplot2::ggplot() +
+    dplyr::ungroup()
+  }
+  g1 = ggplot2::ggplot(df) +
     # geom_errorbar(size = 0.5, width = 0.02) +
     ggplot2::scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
     ggplot2::scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, by = 0.1)) +
@@ -147,7 +161,14 @@ cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, show_loe
     # scale_fill_viridis(discrete = TRUE, option = 'cividis', begin = 0.5) +
 
 
-    if (show_loess == FALSE && n_bins > 0) {
+    if (show_loess == TRUE) {
+      g1 = g1 +
+        ggplot2::stat_smooth(ggplot2::aes(x = !!rlang::parse_expr(prediction), y = as.numeric(!!rlang::parse_expr(outcome)),
+                                          color = !!rlang::parse_expr(model), fill = !!rlang::parse_expr(model)),
+                            #              alpha = 1/how_many_models), # currently ignored by geom_smooth
+                             se = TRUE, method = "loess")
+      # loess fit through estimates
+    } else {
       g1 = g1 + ggplot2::aes(x = bin_pred,
                    y = bin_prob,
                    color = !!rlang::parse_expr(model),
@@ -157,14 +178,6 @@ cal_plot_multi <- function(df, outcome, prediction, model, n_bins = 10, show_loe
                              alpha = 1/how_many_models) +
         ggplot2::geom_point(size = 2) +
         ggplot2::geom_line(size = 1, alpha = 1/how_many_models)
-    }
-    else if (show_loess == TRUE && n_bins == 0) {
-      g1 = g1 +
-        ggplot2::stat_smooth(ggplot2::aes(x = !!rlang::parse_expr(prediction), y = as.numeric(!!rlang::parse_expr(outcome)),
-                                          color = !!rlang::parse_expr(model), fill = !!rlang::parse_expr(model)),
-                            #              alpha = 1/how_many_models), # currently ignored by geom_smooth
-                             se = TRUE, method = "loess")
-      # loess fit through estimates
     }
 
   g1 = g1 +

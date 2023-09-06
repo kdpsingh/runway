@@ -7,6 +7,7 @@
 #' @param df The df as a data.frame.
 #' @param outcome A character string containing the name of the column
 #'   containing the outcomes (expressed as 0/1s).
+#' @param positive A character string containing the value of outcome that is the positive class.
 #' @param prediction A character string containing the name of the column
 #'   containing the predictions.
 #' @param ci Show confidence interval ribbon.
@@ -16,16 +17,20 @@
 #' @return A ggplot containing the calibration plot
 #' @examples
 #' data(single_model_dataset)
-#' roc_plot(single_model_dataset, outcome = 'outcomes', prediction = 'predictions', ci = TRUE)
+#' roc_plot(single_model_dataset, outcome = 'outcomes', positive = '1', prediction = 'predictions', ci = TRUE)
 #' @export
-roc_plot <- function(df, outcome, prediction, ci = FALSE, plot_title = '') {
+roc_plot <- function(df, outcome, positive, prediction, ci = FALSE, plot_title = '') {
+  
+  # Converts outcome to be 0s and 1s
+  df[[outcome]] = ifelse(positive == df[[outcome]], 1, 0)
+
   obj <- pROC::roc_(df, response = outcome, predictor = prediction, ci = ci, plot=FALSE)
   ciobj <- pROC::ci.se(obj, specificities = seq(0, 1, l = 25))
-  dat.ci <- data.frame(x = as.numeric(rownames(ciobj)),
+  dat.ci <- data.frame(x = 1 - as.numeric(rownames(ciobj)),
                        lower = ciobj[, 1],
                        upper = ciobj[, 3])
 
-  g1 = pROC::ggroc(obj) +
+  g1 = pROC::ggroc(obj, legacy.axes = TRUE) +
     ggplot2::theme_minimal() +
     ggplot2::geom_abline(
       slope = 1,
@@ -56,6 +61,7 @@ roc_plot <- function(df, outcome, prediction, ci = FALSE, plot_title = '') {
 #' @param df The df as a data.frame.
 #' @param outcome A character string containing the name of the column
 #'   containing the outcomes (expressed as 0/1s).
+#' @param positive A character string containing the value of outcome that is the positive class.
 #' @param prediction A character string containing the name of the column
 #'   containing the predictions.
 #' @param model A character string containing the name of the column
@@ -69,7 +75,7 @@ roc_plot <- function(df, outcome, prediction, ci = FALSE, plot_title = '') {
 #' data(multi_model_dataset)
 #' roc_plot_multi(multi_model_dataset, outcome = 'outcomes', prediction = 'predictions', model = 'model_name', ci = TRUE)
 #' @export
-roc_plot_multi <- function(df, outcome, prediction, model, ci = FALSE, plot_title = '') {
+roc_plot_multi <- function(df, outcome, positive, prediction, model, ci = FALSE, plot_title = '') {
 
   how_many_models = df[[model]] %>% unique() %>% length()
 
@@ -82,7 +88,7 @@ roc_plot_multi <- function(df, outcome, prediction, model, ci = FALSE, plot_titl
                   ci_ribbon = purrr::map(ci_spec, ~ build_ci_data(.)))
 
   # build ROC curves
-  g1 = pROC::ggroc(ci_data$roc) +
+  g1 = pROC::ggroc(ci_data$roc, legacy.axes = TRUE) +
     ggplot2::theme_minimal() +
     ggplot2::geom_abline(
       slope = 1,
@@ -105,7 +111,8 @@ roc_plot_multi <- function(df, outcome, prediction, model, ci = FALSE, plot_titl
       dplyr::select(!!rlang::parse_expr(model), ci_ribbon) %>%
       dplyr::rename(name = !!rlang::parse_expr(model)) %>%
       tidyr::unnest_wider(ci_ribbon) %>%
-      tidyr::unnest(cols = c(x, lower, upper))
+      tidyr::unnest(cols = c(x, lower, upper)) %>%
+      dplyr::mutate(x = 1 - x)
 
     # ci_values = ci_data %>%
     #   dplyr::select(model_name, roc) %>%

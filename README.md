@@ -75,6 +75,7 @@ head(multi_model_dataset)
 ``` r
 threshperf_plot(single_model_dataset,
                 outcome = 'outcomes',
+                positive = '1',
                 prediction = 'predictions')
 ```
 
@@ -86,7 +87,8 @@ Note: 10 bins is the default.
 
 ``` r
 cal_plot(single_model_dataset,
-         outcome = 'outcomes', 
+         outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions')
 ```
 
@@ -96,35 +98,26 @@ cal_plot(single_model_dataset,
 
 ``` r
 cal_plot(single_model_dataset,
-         outcome = 'outcomes', 
+         outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions',
          n_bins = 5)
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
 
-### Calibration plot with 10 bins and loess curve (single model)
+### Calibration plot with loess curve (single model)
 
 ``` r
 cal_plot(single_model_dataset,
-         outcome = 'outcomes', 
-         prediction = 'predictions',
-         show_loess = TRUE)
-```
-
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
-
-### Calibration plot with loess curve only (single model)
-
-``` r
-cal_plot(single_model_dataset,
-         outcome = 'outcomes', 
+         outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions',
          n_bins = 0,
          show_loess = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
 ## Comparing multiple models
 
@@ -133,11 +126,12 @@ cal_plot(single_model_dataset,
 ``` r
 threshperf_plot_multi(multi_model_dataset,
                       outcome = 'outcomes',
+                      positive = '1',
                       prediction = 'predictions',
                       model = 'model_name')
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
 ### Calibration plot with 10 bins (multiple models)
 
@@ -146,62 +140,67 @@ Note: 10 bins is the default.
 ``` r
 cal_plot_multi(multi_model_dataset,
          outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions',
          model = 'model_name')
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
 
 ## Calibration plot with 5 bins (multiple models)
 
 ``` r
 cal_plot_multi(multi_model_dataset,
          outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions',
          model = 'model_name',
          n_bins = 5)
 ```
 
-<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
 
 ## Calibration plot with loess curve (multiple models)
 
 Unlike single calibration plots, the choice of binned calibration and
-loess calibration are mutually exclusive. To show LOESS curves, you must
+loess calibration are mutually exclusive. To show less curves, you must
 set `show_loess` to `TRUE` *and* `n_bins` to `0`.
 
 ``` r
 cal_plot_multi(multi_model_dataset,
          outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions',
          model = 'model_name',
          n_bins = 0,
          show_loess = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
 
 ## ROC curve w/CI
 
 ``` r
 roc_plot(single_model_dataset, 
          outcome = 'outcomes', 
+         positive = '1',
          prediction = 'predictions',
          ci = TRUE, 
          plot_title = 'Single ROC curve w/CI ribbon')
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
 
 ## Multiple ROC curves w/CI ribbons
 
 ``` r
 roc_plot_multi(multi_model_dataset, 
          outcome = 'outcomes', 
+         positive = '1',
          prediction = 'predictions', 
          model = 'model_name',
          ci = TRUE,
          plot_title = 'Multiple model ROC curves w/CI ribbons')
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />

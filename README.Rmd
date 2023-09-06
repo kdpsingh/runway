@@ -71,6 +71,7 @@ head(multi_model_dataset)
 ```{r}
 threshperf_plot(single_model_dataset,
                 outcome = 'outcomes',
+                positive = '1',
                 prediction = 'predictions')
 ```
 
@@ -81,7 +82,8 @@ Note: 10 bins is the default.
 
 ```{r}
 cal_plot(single_model_dataset,
-         outcome = 'outcomes', 
+         outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions')
 ```
 
@@ -89,26 +91,19 @@ cal_plot(single_model_dataset,
 
 ```{r}
 cal_plot(single_model_dataset,
-         outcome = 'outcomes', 
+         outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions',
          n_bins = 5)
 ```
 
 
-### Calibration plot with 10 bins and loess curve (single model)
+### Calibration plot with loess curve (single model)
 
 ```{r}
 cal_plot(single_model_dataset,
-         outcome = 'outcomes', 
-         prediction = 'predictions',
-         show_loess = TRUE)
-```
-
-### Calibration plot with loess curve only (single model)
-
-```{r}
-cal_plot(single_model_dataset,
-         outcome = 'outcomes', 
+         outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions',
          n_bins = 0,
          show_loess = TRUE)
@@ -117,12 +112,12 @@ cal_plot(single_model_dataset,
 
 ## Comparing multiple models
 
-
 ### Threshold-performance plot (multiple models)
 
 ```{r}
 threshperf_plot_multi(multi_model_dataset,
                       outcome = 'outcomes',
+                      positive = '1',
                       prediction = 'predictions',
                       model = 'model_name')
 ```
@@ -134,6 +129,7 @@ Note: 10 bins is the default.
 ```{r}
 cal_plot_multi(multi_model_dataset,
          outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions',
          model = 'model_name')
 ```
@@ -143,6 +139,7 @@ cal_plot_multi(multi_model_dataset,
 ```{r}
 cal_plot_multi(multi_model_dataset,
          outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions',
          model = 'model_name',
          n_bins = 5)
@@ -156,6 +153,7 @@ Unlike single calibration plots, the choice of binned calibration and loess cali
 ```{r}
 cal_plot_multi(multi_model_dataset,
          outcome = 'outcomes',
+         positive = '1',
          prediction = 'predictions',
          model = 'model_name',
          n_bins = 0,
@@ -167,6 +165,7 @@ cal_plot_multi(multi_model_dataset,
 ```{r}
 roc_plot(single_model_dataset, 
          outcome = 'outcomes', 
+         positive = '1',
          prediction = 'predictions',
          ci = TRUE, 
          plot_title = 'Single ROC curve w/CI ribbon')
@@ -177,6 +176,7 @@ roc_plot(single_model_dataset,
 ```{r}
 roc_plot_multi(multi_model_dataset, 
          outcome = 'outcomes', 
+         positive = '1',
          prediction = 'predictions', 
          model = 'model_name',
          ci = TRUE,
